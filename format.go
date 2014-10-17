@@ -7,7 +7,6 @@ package image
 import (
 	"bufio"
 	"image"
-	"image/color"
 	"io"
 	"os"
 	"strings"
@@ -15,7 +14,6 @@ import (
 
 // Options are the encoding and decoding parameters.
 type Options interface {
-	ColorModel() color.Model
 	Lossless() bool
 	Quality() float32
 }
@@ -34,7 +32,7 @@ type Format struct {
 	Magics       []string
 	DecodeConfig func(r io.Reader) (image.Config, error)
 	Decode       func(r io.Reader, opt Options) (image.Image, error)
-	Encode       func(w io.Writer, m image.Image, opt Options) error
+	Encode       func(w io.Writer, m image.Image) error
 }
 
 // Formats is the list of registered formats.
@@ -140,10 +138,10 @@ func DecodeConfig(r io.Reader) (image.Config, string, error) {
 // The format is the format name used during format registration.
 // Format registration is typically done by an init function in the codec-
 // specific package.
-func Encode(format string, w io.Writer, m image.Image, opt Options) error {
+func Encode(format string, w io.Writer, m image.Image) error {
 	for _, f := range formats {
 		if f.Name == format {
-			return f.Encode(w, m, opt)
+			return f.Encode(w, m)
 		}
 	}
 	return image.ErrFormat
@@ -162,14 +160,14 @@ func Load(filename string, opt Options) (m image.Image, format string, err error
 	return
 }
 
-func Save(filename string, m image.Image, opt Options) (err error) {
+func Save(filename string, m image.Image) (err error) {
 	f, err := os.Create(filename)
 	if err != nil {
 		return
 	}
 	defer f.Close()
 
-	if err = sniffByName(filename).Encode(f, m, opt); err != nil {
+	if err = sniffByName(filename).Encode(f, m); err != nil {
 		return
 	}
 	return

@@ -11,7 +11,7 @@ import (
 )
 
 type Image interface {
-	// Get standard original type, such as *image.Gray, *image.RGBA, etc.
+	// Get original type, such as *image.Gray, *image.RGBA, etc.
 	BaseType() image.Image
 
 	// Pix holds the image's pixels, as pixel values in big-endian format. The pixel at
@@ -30,10 +30,14 @@ type Image interface {
 	draw.Image
 }
 
-func New(r image.Rectangle, channels int, dataType reflect.Kind) (m Image, err error) {
+func AsImage(x image.Image) (m Image) {
 	panic("TODO")
 }
 
-func NewFromImage(x image.Image, deepCopy bool) (m Image, err error) {
+func ConvertImage(x image.Image, channels int, dataType reflect.Kind) (m Image) {
+	panic("TODO")
+}
+
+func NewImage(r image.Rectangle, channels int, dataType reflect.Kind) (m Image, err error) {
 	panic("TODO")
 }
