@@ -46,10 +46,10 @@ func (p *RGBA128f) BaseType() image.Image { return p }
 func (p *RGBA128f) Pix() []byte           { return p.m.Pix }
 func (p *RGBA128f) Stride() int           { return p.m.Stride }
 func (p *RGBA128f) Rect() image.Rectangle { return p.m.Rect }
-func (p *RGBA128f) Channels() int         { return 1 }
+func (p *RGBA128f) Channels() int         { return 4 }
 func (p *RGBA128f) Depth() reflect.Kind   { return reflect.Float32 }
 
-func (p *RGBA128f) ColorModel() color.Model { return color.RGBAModel }
+func (p *RGBA128f) ColorModel() color.Model { return color.RGBA64Model }
 
 func (p *RGBA128f) Bounds() image.Rectangle { return p.Rect() }
 
@@ -57,8 +57,8 @@ func (p *RGBA128f) At(x, y int) color.Color {
 	return nil
 }
 
-func (p *RGBA128f) ColorAt(x, y int) float32 {
-	return 0
+func (p *RGBA128f) RGBA128fAt(x, y int) [4]float32 {
+	return [4]float32{}
 }
 
 // PixOffset returns the index of the first element of _Pix that corresponds to
@@ -71,7 +71,7 @@ func (p *RGBA128f) Set(x, y int, c color.Color) {
 	return
 }
 
-func (p *RGBA128f) SetColor(x, y int, c float32) {
+func (p *RGBA128f) SetRGBA128f(x, y int, c [4]float32) {
 	return
 }
 

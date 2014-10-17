@@ -24,8 +24,8 @@ func (p *RGB) BaseType() image.Image { return p }
 func (p *RGB) Pix() []byte           { return p.m.Pix }
 func (p *RGB) Stride() int           { return p.m.Stride }
 func (p *RGB) Rect() image.Rectangle { return p.m.Rect }
-func (p *RGB) Channels() int         { return 1 }
-func (p *RGB) Depth() reflect.Kind   { return reflect.Float32 }
+func (p *RGB) Channels() int         { return 3 }
+func (p *RGB) Depth() reflect.Kind   { return reflect.Uint8 }
 
 func (p *RGB) ColorModel() color.Model { return color.RGBAModel }
 
@@ -35,8 +35,8 @@ func (p *RGB) At(x, y int) color.Color {
 	return nil
 }
 
-func (p *RGB) ColorAt(x, y int) float32 {
-	return 0
+func (p *RGB) RGBAt(x, y int) [3]uint8 {
+	return [3]uint8{}
 }
 
 // PixOffset returns the index of the first element of _Pix that corresponds to
@@ -49,7 +49,7 @@ func (p *RGB) Set(x, y int, c color.Color) {
 	return
 }
 
-func (p *RGB) SetColor(x, y int, c float32) {
+func (p *RGB) SetRGB(x, y int, c [3]uint8) {
 	return
 }
 
@@ -76,10 +76,10 @@ func (p *RGB48) BaseType() image.Image { return p }
 func (p *RGB48) Pix() []byte           { return p.m.Pix }
 func (p *RGB48) Stride() int           { return p.m.Stride }
 func (p *RGB48) Rect() image.Rectangle { return p.m.Rect }
-func (p *RGB48) Channels() int         { return 1 }
-func (p *RGB48) Depth() reflect.Kind   { return reflect.Float32 }
+func (p *RGB48) Channels() int         { return 3 }
+func (p *RGB48) Depth() reflect.Kind   { return reflect.Uint16 }
 
-func (p *RGB48) ColorModel() color.Model { return color.RGBAModel }
+func (p *RGB48) ColorModel() color.Model { return color.RGBA64Model }
 
 func (p *RGB48) Bounds() image.Rectangle { return p.Rect() }
 
@@ -87,8 +87,8 @@ func (p *RGB48) At(x, y int) color.Color {
 	return nil
 }
 
-func (p *RGB48) ColorAt(x, y int) float32 {
-	return 0
+func (p *RGB48) RGB48At(x, y int) [3]uint16 {
+	return [3]uint16{}
 }
 
 // PixOffset returns the index of the first element of _Pix that corresponds to
@@ -101,7 +101,7 @@ func (p *RGB48) Set(x, y int, c color.Color) {
 	return
 }
 
-func (p *RGB48) SetColor(x, y int, c float32) {
+func (p *RGB48) SetRGB48(x, y int, c [3]uint16) {
 	return
 }
 
@@ -128,10 +128,10 @@ func (p *RGB96f) BaseType() image.Image { return p }
 func (p *RGB96f) Pix() []byte           { return p.m.Pix }
 func (p *RGB96f) Stride() int           { return p.m.Stride }
 func (p *RGB96f) Rect() image.Rectangle { return p.m.Rect }
-func (p *RGB96f) Channels() int         { return 1 }
+func (p *RGB96f) Channels() int         { return 3 }
 func (p *RGB96f) Depth() reflect.Kind   { return reflect.Float32 }
 
-func (p *RGB96f) ColorModel() color.Model { return color.RGBAModel }
+func (p *RGB96f) ColorModel() color.Model { return color.RGBA64Model }
 
 func (p *RGB96f) Bounds() image.Rectangle { return p.Rect() }
 
@@ -139,8 +139,8 @@ func (p *RGB96f) At(x, y int) color.Color {
 	return nil
 }
 
-func (p *RGB96f) ColorAt(x, y int) float32 {
-	return 0
+func (p *RGB96f) RGB96fAt(x, y int) [3]float32 {
+	return [3]float32{}
 }
 
 // PixOffset returns the index of the first element of _Pix that corresponds to
@@ -153,7 +153,7 @@ func (p *RGB96f) Set(x, y int, c color.Color) {
 	return
 }
 
-func (p *RGB96f) SetColor(x, y int, c float32) {
+func (p *RGB96f) SetRGB96f(x, y int, c [3]float32) {
 	return
 }
 

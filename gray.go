@@ -57,7 +57,7 @@ func (p *Gray32f) At(x, y int) color.Color {
 	return nil
 }
 
-func (p *Gray32f) ColorAt(x, y int) float32 {
+func (p *Gray32f) Gray32fAt(x, y int) float32 {
 	return 0
 }
 
@@ -71,7 +71,7 @@ func (p *Gray32f) Set(x, y int, c color.Color) {
 	return
 }
 
-func (p *Gray32f) SetColor(x, y int, c float32) {
+func (p *Gray32f) SetGray32f(x, y int, c float32) {
 	return
 }
 

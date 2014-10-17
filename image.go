@@ -34,7 +34,19 @@ func AsImage(x image.Image) (m Image) {
 	panic("TODO")
 }
 
+func CopyImage(x image.Image) (m Image) {
+	panic("TODO")
+}
+
 func ConvertImage(x image.Image, channels int, dataType reflect.Kind) (m Image) {
+	panic("TODO")
+}
+
+func CopyConvertImage(x image.Image, channels int, dataType reflect.Kind) (m Image) {
+	panic("TODO")
+}
+
+func CopyImage(x image.Image) (m Image) {
 	panic("TODO")
 }
 
