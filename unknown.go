@@ -68,6 +68,6 @@ func (p *Unknown) SubImage(r image.Rectangle) image.Image {
 }
 
 // NewUnknown returns a new Unknown with the given bounds.
-func NewUnknown(r image.Rectangle) *Unknown {
-	return nil
+func NewUnknown(r image.Rectangle, channels int, dataType reflect.Kind) (m *Unknown, err error) {
+	return
 }

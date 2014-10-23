@@ -6,8 +6,8 @@ package image
 
 type (
 	colorGrayA    [2]uint8
-	colorGrayA16  [2]uint16
-	colorGrayA32f [2]float32
+	colorGrayA32  [2]uint16
+	colorGrayA64f [2]float32
 	colorRGB      [3]uint8
 	colorRGB48    [3]uint16
 	colorRGB96f   [3]float32
@@ -27,7 +27,7 @@ func (c colorGrayA) RGBA() (r, g, b, a uint32) {
 	return
 }
 
-func (c colorGrayA16) RGBA() (r, g, b, a uint32) {
+func (c colorGrayA32) RGBA() (r, g, b, a uint32) {
 	r = uint32(c[0])
 	g = uint32(c[0])
 	b = uint32(c[0])
@@ -35,7 +35,7 @@ func (c colorGrayA16) RGBA() (r, g, b, a uint32) {
 	return
 }
 
-func (c colorGrayA32f) RGBA() (r, g, b, a uint32) {
+func (c colorGrayA64f) RGBA() (r, g, b, a uint32) {
 	r = uint32(uint16(c[0]))
 	g = uint32(uint16(c[0]))
 	b = uint32(uint16(c[0]))

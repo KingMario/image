@@ -29,6 +29,19 @@ func (p *RGBA) Rect() image.Rectangle { return p.RGBA.Rect }
 func (p *RGBA) Channels() int         { return 4 }
 func (p *RGBA) Depth() reflect.Kind   { return reflect.Uint8 }
 
+// NewRGBA returns a new RGBA with the given bounds.
+func NewRGBA(r image.Rectangle) *RGBA {
+	w, h := r.Dx(), r.Dy()
+	pix := make([]uint8, 4*w*h)
+	return &RGBA{
+		RGBA: &image.RGBA{
+			Pix:    pix,
+			Stride: 4 * w,
+			Rect:   r,
+		},
+	}
+}
+
 type RGBA64 struct {
 	*image.RGBA64
 }
@@ -39,6 +52,19 @@ func (p *RGBA64) Stride() int           { return p.RGBA64.Stride }
 func (p *RGBA64) Rect() image.Rectangle { return p.RGBA64.Rect }
 func (p *RGBA64) Channels() int         { return 4 }
 func (p *RGBA64) Depth() reflect.Kind   { return reflect.Uint16 }
+
+// NewRGBA64 returns a new RGBA64 with the given bounds.
+func NewRGBA64(r image.Rectangle) *RGBA64 {
+	w, h := r.Dx(), r.Dy()
+	pix := make([]uint8, 8*w*h)
+	return &RGBA64{
+		RGBA64: &image.RGBA64{
+			Pix:    pix,
+			Stride: 8 * w,
+			Rect:   r,
+		},
+	}
+}
 
 type RGBA128f struct {
 	m image.RGBA

@@ -29,6 +29,19 @@ func (p *Gray) Rect() image.Rectangle { return p.Gray.Rect }
 func (p *Gray) Channels() int         { return 1 }
 func (p *Gray) Depth() reflect.Kind   { return reflect.Uint8 }
 
+// NewGray returns a new Gray with the given bounds.
+func NewGray(r image.Rectangle) *Gray {
+	w, h := r.Dx(), r.Dy()
+	pix := make([]uint8, 1*w*h)
+	return &Gray{
+		Gray: &image.Gray{
+			Pix:    pix,
+			Stride: 1 * w,
+			Rect:   r,
+		},
+	}
+}
+
 type Gray16 struct {
 	*image.Gray16
 }
@@ -39,6 +52,19 @@ func (p *Gray16) Stride() int           { return p.Gray16.Stride }
 func (p *Gray16) Rect() image.Rectangle { return p.Gray16.Rect }
 func (p *Gray16) Channels() int         { return 1 }
 func (p *Gray16) Depth() reflect.Kind   { return reflect.Uint16 }
+
+// NewGray16 returns a new Gray16 with the given bounds.
+func NewGray16(r image.Rectangle) *Gray16 {
+	w, h := r.Dx(), r.Dy()
+	pix := make([]uint8, 2*w*h)
+	return &Gray16{
+		Gray16: &image.Gray16{
+			Pix:    pix,
+			Stride: 2 * w,
+			Rect:   r,
+		},
+	}
+}
 
 type Gray32f struct {
 	m image.Gray
