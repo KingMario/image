@@ -46,10 +46,6 @@ func CopyConvertImage(x image.Image, channels int, dataType reflect.Kind) (m Ima
 	panic("TODO")
 }
 
-func CopyImage(x image.Image) (m Image) {
-	panic("TODO")
-}
-
 func NewImage(r image.Rectangle, channels int, dataType reflect.Kind) (m Image, err error) {
 	panic("TODO")
 }

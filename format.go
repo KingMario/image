@@ -79,14 +79,13 @@ func match(magic string, b []byte) bool {
 
 // Sniff determines the format by filename extension.
 func sniffByName(filename string) Format {
-	var ext string
 	if idx := strings.LastIndex(filename, "."); idx >= 0 {
-		ext = strings.ToLower(filename[idx:])
-	}
-	for _, f := range formats {
-		for _, extensions := range f.Extensions {
-			if ext == extensions {
-				return f
+		ext := strings.ToLower(filename[idx:])
+		for _, f := range formats {
+			for _, extensions := range f.Extensions {
+				if ext == extensions {
+					return f
+				}
 			}
 		}
 	}
@@ -167,7 +166,11 @@ func Save(filename string, m image.Image) (err error) {
 	}
 	defer f.Close()
 
-	if err = sniffByName(filename).Encode(f, m); err != nil {
+	format := sniffByName(filename)
+	if format.Encode == nil {
+		return image.ErrFormat
+	}
+	if err = format.Encode(f, m); err != nil {
 		return
 	}
 	return

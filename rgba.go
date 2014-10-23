@@ -5,8 +5,10 @@
 package image
 
 import (
+	"encoding/binary"
 	"image"
 	"image/color"
+	"math"
 	"reflect"
 )
 
@@ -39,7 +41,7 @@ func (p *RGBA64) Channels() int         { return 4 }
 func (p *RGBA64) Depth() reflect.Kind   { return reflect.Uint16 }
 
 type RGBA128f struct {
-	m *image.RGBA
+	m image.RGBA
 }
 
 func (p *RGBA128f) BaseType() image.Image { return p }
@@ -51,41 +53,121 @@ func (p *RGBA128f) Depth() reflect.Kind   { return reflect.Float32 }
 
 func (p *RGBA128f) ColorModel() color.Model { return color.RGBA64Model }
 
-func (p *RGBA128f) Bounds() image.Rectangle { return p.Rect() }
+func (p *RGBA128f) Bounds() image.Rectangle { return p.m.Rect }
 
 func (p *RGBA128f) At(x, y int) color.Color {
-	return nil
+	c := p.RGBA128fAt(x, y)
+	rr, gg, bb, aa := colorRGBA128f(c).RGBA()
+	return color.RGBA64{
+		R: uint16(rr),
+		G: uint16(gg),
+		B: uint16(bb),
+		A: uint16(aa),
+	}
 }
 
 func (p *RGBA128f) RGBA128fAt(x, y int) [4]float32 {
-	return [4]float32{}
+	if !(image.Point{x, y}.In(p.m.Rect)) {
+		return [4]float32{}
+	}
+	i := p.PixOffset(x, y)
+	bitsR := binary.BigEndian.Uint32(p.m.Pix[i+4*0:])
+	bitsG := binary.BigEndian.Uint32(p.m.Pix[i+4*1:])
+	bitsB := binary.BigEndian.Uint32(p.m.Pix[i+4*2:])
+	bitsA := binary.BigEndian.Uint32(p.m.Pix[i+4*3:])
+	r := math.Float32frombits(bitsR)
+	g := math.Float32frombits(bitsG)
+	b := math.Float32frombits(bitsB)
+	a := math.Float32frombits(bitsA)
+	return [4]float32{r, g, b, a}
 }
 
 // PixOffset returns the index of the first element of _Pix that corresponds to
 // the pixel at (x, y).
 func (p *RGBA128f) PixOffset(x, y int) int {
-	return 0
+	return (y-p.m.Rect.Min.Y)*p.m.Stride + (x-p.m.Rect.Min.X)*16
 }
 
 func (p *RGBA128f) Set(x, y int, c color.Color) {
+	if !(image.Point{x, y}.In(p.m.Rect)) {
+		return
+	}
+	i := p.PixOffset(x, y)
+	v := color.RGBA64Model.Convert(c).(color.RGBA64)
+	bitsR := math.Float32bits(float32(v.R))
+	bitsG := math.Float32bits(float32(v.G))
+	bitsB := math.Float32bits(float32(v.B))
+	bitsA := math.Float32bits(float32(v.A))
+	binary.BigEndian.PutUint32(p.m.Pix[i+4*0:], bitsR)
+	binary.BigEndian.PutUint32(p.m.Pix[i+4*1:], bitsG)
+	binary.BigEndian.PutUint32(p.m.Pix[i+4*2:], bitsB)
+	binary.BigEndian.PutUint32(p.m.Pix[i+4*3:], bitsA)
 	return
 }
 
 func (p *RGBA128f) SetRGBA128f(x, y int, c [4]float32) {
+	if !(image.Point{x, y}.In(p.m.Rect)) {
+		return
+	}
+	i := p.PixOffset(x, y)
+	bitsR := math.Float32bits(c[0])
+	bitsG := math.Float32bits(c[1])
+	bitsB := math.Float32bits(c[2])
+	bitsA := math.Float32bits(c[3])
+	binary.BigEndian.PutUint32(p.m.Pix[i+4*0:], bitsR)
+	binary.BigEndian.PutUint32(p.m.Pix[i+4*1:], bitsG)
+	binary.BigEndian.PutUint32(p.m.Pix[i+4*2:], bitsB)
+	binary.BigEndian.PutUint32(p.m.Pix[i+4*3:], bitsA)
 	return
 }
 
 // SubImage returns an image representing the portion of the image p visible
 // through r. The returned value shares pixels with the original image.
 func (p *RGBA128f) SubImage(r image.Rectangle) image.Image {
-	return nil
+	r = r.Intersect(p.m.Rect)
+	// If r1 and r2 are Rectangles, r1.Intersect(r2) is not guaranteed to be inside
+	// either r1 or r2 if the intersection is empty. Without explicitly checking for
+	// this, the Pix[i:] expression below can panic.
+	if r.Empty() {
+		return &RGBA128f{}
+	}
+	i := p.PixOffset(r.Min.X, r.Min.Y)
+	return &RGBA128f{
+		m: image.RGBA{
+			Pix:    p.m.Pix[i:],
+			Stride: p.m.Stride,
+			Rect:   r,
+		},
+	}
 }
 
 // Opaque scans the entire image and reports whether it is fully opaque.
 func (p *RGBA128f) Opaque() bool {
+	if p.m.Rect.Empty() {
+		return true
+	}
+	i0, i1 := 12, p.m.Rect.Dx()*16
+	for y := p.m.Rect.Min.Y; y < p.m.Rect.Max.Y; y++ {
+		for i := i0; i < i1; i += 16 {
+			if math.Float32frombits(binary.BigEndian.Uint32(p.m.Pix[i:])) < 0xFFFF {
+				return false
+			}
+		}
+		i0 += p.m.Stride
+		i1 += p.m.Stride
+	}
 	return true
 }
 
+// NewRGBA128f returns a new RGBA128f with the given bounds.
 func NewRGBA128f(r image.Rectangle) *RGBA128f {
-	return nil
+	w, h := r.Dx(), r.Dy()
+	pix := make([]uint8, 16*w*h)
+	return &RGBA128f{
+		m: image.RGBA{
+			Pix:    pix,
+			Stride: 16 * w,
+			Rect:   r,
+		},
+	}
 }
