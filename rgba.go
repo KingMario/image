@@ -82,7 +82,7 @@ func (p *RGBA128f) RGBA128fAt(x, y int) [4]float32 {
 	return [4]float32{r, g, b, a}
 }
 
-// PixOffset returns the index of the first element of _Pix that corresponds to
+// PixOffset returns the index of the first element of Pix that corresponds to
 // the pixel at (x, y).
 func (p *RGBA128f) PixOffset(x, y int) int {
 	return (y-p.m.Rect.Min.Y)*p.m.Stride + (x-p.m.Rect.Min.X)*16

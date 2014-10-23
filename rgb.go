@@ -56,7 +56,7 @@ func (p *RGB) RGBAt(x, y int) [3]uint8 {
 	}
 }
 
-// PixOffset returns the index of the first element of _Pix that corresponds to
+// PixOffset returns the index of the first element of Pix that corresponds to
 // the pixel at (x, y).
 func (p *RGB) PixOffset(x, y int) int {
 	return (y-p.m.Rect.Min.Y)*p.m.Stride + (x-p.m.Rect.Min.X)*3
@@ -161,7 +161,7 @@ func (p *RGB48) RGB48At(x, y int) [3]uint16 {
 	}
 }
 
-// PixOffset returns the index of the first element of _Pix that corresponds to
+// PixOffset returns the index of the first element of Pix that corresponds to
 // the pixel at (x, y).
 func (p *RGB48) PixOffset(x, y int) int {
 	return (y-p.m.Rect.Min.Y)*p.m.Stride + (x-p.m.Rect.Min.X)*6
@@ -274,7 +274,7 @@ func (p *RGB96f) RGB96fAt(x, y int) [3]float32 {
 	return [3]float32{r, g, b}
 }
 
-// PixOffset returns the index of the first element of _Pix that corresponds to
+// PixOffset returns the index of the first element of Pix that corresponds to
 // the pixel at (x, y).
 func (p *RGB96f) PixOffset(x, y int) int {
 	return (y-p.m.Rect.Min.Y)*p.m.Stride + (x-p.m.Rect.Min.X)*12

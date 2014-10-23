@@ -70,7 +70,7 @@ func (p *Gray32f) Gray32fAt(x, y int) float32 {
 	return v
 }
 
-// PixOffset returns the index of the first element of _Pix that corresponds to
+// PixOffset returns the index of the first element of Pix that corresponds to
 // the pixel at (x, y).
 func (p *Gray32f) PixOffset(x, y int) int {
 	return (y-p.m.Rect.Min.Y)*p.m.Stride + (x-p.m.Rect.Min.X)*4

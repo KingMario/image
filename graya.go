@@ -54,7 +54,7 @@ func (p *GrayA) GrayAAt(x, y int) [2]uint8 {
 	}
 }
 
-// PixOffset returns the index of the first element of _Pix that corresponds to
+// PixOffset returns the index of the first element of Pix that corresponds to
 // the pixel at (x, y).
 func (p *GrayA) PixOffset(x, y int) int {
 	return (y-p.m.Rect.Min.Y)*p.m.Stride + (x-p.m.Rect.Min.X)*2
@@ -170,7 +170,7 @@ func (p *GrayA16) GrayA16At(x, y int) [2]uint16 {
 	}
 }
 
-// PixOffset returns the index of the first element of _Pix that corresponds to
+// PixOffset returns the index of the first element of Pix that corresponds to
 // the pixel at (x, y).
 func (p *GrayA16) PixOffset(x, y int) int {
 	return (y-p.m.Rect.Min.Y)*p.m.Stride + (x-p.m.Rect.Min.X)*4
@@ -289,7 +289,7 @@ func (p *GrayA32f) GrayA32fAt(x, y int) [2]float32 {
 	return [2]float32{v0, v1}
 }
 
-// PixOffset returns the index of the first element of _Pix that corresponds to
+// PixOffset returns the index of the first element of Pix that corresponds to
 // the pixel at (x, y).
 func (p *GrayA32f) PixOffset(x, y int) int {
 	return (y-p.m.Rect.Min.Y)*p.m.Stride + (x-p.m.Rect.Min.X)*8
