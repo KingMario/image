@@ -133,6 +133,17 @@ func NewGrayA(r image.Rectangle) *GrayA {
 	}
 }
 
+func (p *GrayA) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+	*p = GrayA{
+		m: image.Gray{
+			Pix:    pix,
+			Stride: stride,
+			Rect:   rect,
+		},
+	}
+	return p
+}
+
 type GrayA32 struct {
 	m image.Gray16
 }
@@ -253,6 +264,17 @@ func NewGrayA32(r image.Rectangle) *GrayA32 {
 	}
 }
 
+func (p *GrayA32) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+	*p = GrayA32{
+		m: image.Gray16{
+			Pix:    pix,
+			Stride: stride,
+			Rect:   rect,
+		},
+	}
+	return p
+}
+
 type GrayA64f struct {
 	m image.Gray
 }
@@ -366,4 +388,15 @@ func NewGrayA64f(r image.Rectangle) *GrayA64f {
 			Rect:   r,
 		},
 	}
+}
+
+func (p *GrayA64f) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+	*p = GrayA64f{
+		m: image.Gray{
+			Pix:    pix,
+			Stride: stride,
+			Rect:   rect,
+		},
+	}
+	return p
 }

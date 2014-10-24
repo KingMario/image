@@ -66,61 +66,126 @@ func AsImage(x image.Image) (m Image) {
 }
 
 func CopyImage(x image.Image) (m Image) {
+	if _, ok := x.(Image); ok {
+		// speed up
+	}
+
+	switch x.(type) {
+	case *image.Gray:
+		// speed up
+	case *image.Gray16:
+		// speed up
+	case *image.RGBA:
+		// speed up
+	case *image.RGBA64:
+		// speed up
+	}
+
 	panic("TODO")
 }
 
-func ConvertImage(x image.Image, channels int, dataType reflect.Kind) (m Image) {
+func ConvertImage(x image.Image, channels int, depth reflect.Kind) (m Image) {
+	if x, ok := x.(Image); ok {
+		if x.Channels() == channels && x.Depth() == depth {
+			// speed up
+		}
+	}
+
+	switch x.(type) {
+	case *image.Gray:
+		if channels == 1 && depth == reflect.Uint8 {
+			// speed up
+		}
+	case *image.Gray16:
+		if channels == 1 && depth == reflect.Uint16 {
+			// speed up
+		}
+	case *image.RGBA:
+		if channels == 4 && depth == reflect.Uint8 {
+			// speed up
+		}
+	case *image.RGBA64:
+		if channels == 4 && depth == reflect.Uint16 {
+			// speed up
+		}
+	}
+
 	panic("TODO")
 }
 
-func CopyConvertImage(x image.Image, channels int, dataType reflect.Kind) (m Image) {
+func CopyConvertImage(x image.Image, channels int, depth reflect.Kind) (m Image) {
+	if x, ok := x.(Image); ok {
+		if x.Channels() == channels && x.Depth() == depth {
+			// speed up
+		}
+	}
+
+	switch x.(type) {
+	case *image.Gray:
+		if channels == 1 && depth == reflect.Uint8 {
+			// speed up
+		}
+	case *image.Gray16:
+		if channels == 1 && depth == reflect.Uint16 {
+			// speed up
+		}
+	case *image.RGBA:
+		if channels == 4 && depth == reflect.Uint8 {
+			// speed up
+		}
+	case *image.RGBA64:
+		if channels == 4 && depth == reflect.Uint16 {
+			// speed up
+		}
+	}
+
 	panic("TODO")
 }
 
-func NewImage(r image.Rectangle, channels int, dataType reflect.Kind) (m Image, err error) {
+func NewImage(r image.Rectangle, channels int, depth reflect.Kind) (m Image, err error) {
 	switch {
-	case channels == 1 && dataType == reflect.Uint8:
+	case channels == 1 && depth == reflect.Uint8:
 		m = NewGray(r)
 		return
-	case channels == 1 && dataType == reflect.Uint16:
+	case channels == 1 && depth == reflect.Uint16:
 		m = NewGray16(r)
 		return
-	case channels == 1 && dataType == reflect.Float32:
+	case channels == 1 && depth == reflect.Float32:
 		m = NewGray32f(r)
 		return
 
-	case channels == 2 && dataType == reflect.Uint8:
+	case channels == 2 && depth == reflect.Uint8:
 		m = NewGrayA(r)
 		return
-	case channels == 2 && dataType == reflect.Uint16:
+	case channels == 2 && depth == reflect.Uint16:
 		m = NewGrayA32(r)
 		return
-	case channels == 2 && dataType == reflect.Float32:
+	case channels == 2 && depth == reflect.Float32:
 		m = NewGrayA64f(r)
 		return
 
-	case channels == 3 && dataType == reflect.Uint8:
+	case channels == 3 && depth == reflect.Uint8:
 		m = NewRGB(r)
 		return
-	case channels == 3 && dataType == reflect.Uint16:
+	case channels == 3 && depth == reflect.Uint16:
 		m = NewRGB48(r)
 		return
-	case channels == 3 && dataType == reflect.Float32:
+	case channels == 3 && depth == reflect.Float32:
 		m = NewRGB96f(r)
 		return
 
-	case channels == 4 && dataType == reflect.Uint8:
+	case channels == 4 && depth == reflect.Uint8:
 		m = NewRGBA(r)
 		return
-	case channels == 4 && dataType == reflect.Uint16:
+	case channels == 4 && depth == reflect.Uint16:
 		m = NewRGBA64(r)
 		return
-	case channels == 4 && dataType == reflect.Float32:
+	case channels == 4 && depth == reflect.Float32:
 		m = NewRGBA128f(r)
 		return
 
 	default:
-		m, err = NewUnknown(r, channels, dataType)
+		m, err = NewUnknown(r, channels, depth)
 		return
 	}
 }

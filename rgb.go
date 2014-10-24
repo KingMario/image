@@ -123,6 +123,17 @@ func NewRGB(r image.Rectangle) *RGB {
 	}
 }
 
+func (p *RGB) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+	*p = RGB{
+		m: image.RGBA{
+			Pix:    pix,
+			Stride: stride,
+			Rect:   rect,
+		},
+	}
+	return p
+}
+
 type RGB48 struct {
 	m image.RGBA64
 }
@@ -232,6 +243,17 @@ func NewRGB48(r image.Rectangle) *RGB48 {
 			Rect:   r,
 		},
 	}
+}
+
+func (p *RGB48) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+	*p = RGB48{
+		m: image.RGBA64{
+			Pix:    pix,
+			Stride: stride,
+			Rect:   rect,
+		},
+	}
+	return p
 }
 
 type RGB96f struct {
@@ -345,4 +367,15 @@ func NewRGB96f(r image.Rectangle) *RGB96f {
 			Rect:   r,
 		},
 	}
+}
+
+func (p *RGB96f) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+	*p = RGB96f{
+		m: image.RGBA{
+			Pix:    pix,
+			Stride: stride,
+			Rect:   rect,
+		},
+	}
+	return p
 }
