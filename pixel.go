@@ -309,15 +309,154 @@ func (c Pixel) PutFloat64N(v []float64) {
 	}
 }
 
+func (c Pixel) ValueN() []uint32 {
+	v := make([]uint32, c.Channels)
+	switch c.Depth {
+	case reflect.Int8:
+		for i, x := range c.Int8N() {
+			v[i] = uint32(x) << 8
+		}
+	case reflect.Int16:
+		for i, x := range c.Int16N() {
+			v[i] = uint32(x)
+		}
+	case reflect.Int32:
+		for i, x := range c.Int32N() {
+			v[i] = uint32(x)
+		}
+	case reflect.Int64:
+		for i, x := range c.Int64N() {
+			v[i] = uint32(x)
+		}
+	case reflect.Uint8, reflect.Invalid:
+		for i, x := range c.Uint8N() {
+			v[i] = uint32(x) << 8
+		}
+	case reflect.Uint16:
+		for i, x := range c.Uint16N() {
+			v[i] = uint32(x)
+		}
+	case reflect.Uint32:
+		for i, x := range c.Uint32N() {
+			v[i] = uint32(x)
+		}
+	case reflect.Uint64:
+		for i, x := range c.Uint64N() {
+			v[i] = uint32(x)
+		}
+	case reflect.Float32:
+		for i, x := range c.Uint64N() {
+			v[i] = uint32(x)
+		}
+	case reflect.Float64:
+		for i, x := range c.Uint64N() {
+			v[i] = uint32(x)
+		}
+	}
+	return v
+}
+func (c Pixel) PutValueN(v []uint32) {
+	switch c.Depth {
+	case reflect.Int8:
+		t := make([]int8, c.Channels)
+		for i := 0; i < len(v) && i < c.Channels; i++ {
+			t[i] = int8(uint16(v[i]) >> 8)
+		}
+		c.PutInt8N(t)
+	case reflect.Int16:
+		t := make([]int16, c.Channels)
+		for i := 0; i < len(v) && i < c.Channels; i++ {
+			t[i] = int16(v[i])
+		}
+		c.PutInt16N(t)
+	case reflect.Int32:
+		t := make([]int32, c.Channels)
+		for i := 0; i < len(v) && i < c.Channels; i++ {
+			t[i] = int32(v[i])
+		}
+		c.PutInt32N(t)
+	case reflect.Int64:
+		t := make([]int64, c.Channels)
+		for i := 0; i < len(v) && i < c.Channels; i++ {
+			t[i] = int64(v[i])
+		}
+		c.PutInt64N(t)
+	case reflect.Uint8, reflect.Invalid:
+		t := make([]uint8, c.Channels)
+		for i := 0; i < len(v) && i < c.Channels; i++ {
+			t[i] = uint8(uint16(v[i]) >> 8)
+		}
+		c.PutUint8N(t)
+	case reflect.Uint16:
+		t := make([]uint16, c.Channels)
+		for i := 0; i < len(v) && i < c.Channels; i++ {
+			t[i] = uint16(v[i])
+		}
+		c.PutUint16N(t)
+	case reflect.Uint32:
+		c.PutUint32N(v)
+	case reflect.Uint64:
+		t := make([]uint64, c.Channels)
+		for i := 0; i < len(v) && i < c.Channels; i++ {
+			t[i] = uint64(v[i])
+		}
+		c.PutUint64N(t)
+	case reflect.Float32:
+		t := make([]float32, c.Channels)
+		for i := 0; i < len(v) && i < c.Channels; i++ {
+			t[i] = float32(v[i])
+		}
+		c.PutFloat32N(t)
+	case reflect.Float64:
+		t := make([]float64, c.Channels)
+		for i := 0; i < len(v) && i < c.Channels; i++ {
+			t[i] = float64(v[i])
+		}
+		c.PutFloat64N(t)
+	}
+	return
+}
+
 func (c Pixel) RGBA() (r, g, b, a uint32) {
 	if c.Value == nil {
 		return
 	}
-	panic("TODO")
+	t := c.ValueN()
+	switch c.Channels {
+	case 1:
+		r, g, b, a = t[0], t[0], t[0], 0xFFFF
+	case 2:
+		r, g, b, a = t[0], t[0], t[0], t[1]
+	case 3:
+		r, g, b, a = t[0], t[1], t[2], 0xFFFF
+	case 4:
+		r, g, b, a = t[0], t[1], t[2], t[3]
+	default:
+		r, g, b, a = t[0], t[1], t[2], t[3]
+	}
+	return
 }
 func (c Pixel) PutRGBA(r, g, b, a uint32) {
 	if c.Value == nil {
 		c.Value = make([]byte, depthType(c.Depth).ByteSize()*c.Channels)
 	}
-	panic("TODO")
+	switch c.Channels {
+	case 1:
+		y := colorRgbToGray(r, g, b)
+		v := []uint32{y}
+		c.PutValueN(v)
+	case 2:
+		y := colorRgbToGray(r, g, b)
+		v := []uint32{y, a}
+		c.PutValueN(v)
+	case 3:
+		v := []uint32{r, g, b}
+		c.PutValueN(v)
+	case 4:
+		v := []uint32{r, g, b, a}
+		c.PutValueN(v)
+	default:
+		v := []uint32{r, g, b, a}
+		c.PutValueN(v)
+	}
 }
