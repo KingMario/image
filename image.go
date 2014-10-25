@@ -33,8 +33,8 @@ type Image interface {
 	draw.Image
 }
 
-func newRGBA64FromImage(x image.Image) (m *RGBA64) {
-	b := x.Bounds()
+func newRGBA64FromImage(m image.Image) *RGBA64 {
+	b := m.Bounds()
 	rgba64 := NewRGBA64(b)
 	for y := b.Min.Y; y < b.Max.Y; y++ {
 		for x := b.Min.X; x < b.Max.X; x++ {
