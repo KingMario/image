@@ -33,6 +33,23 @@ type Image interface {
 	draw.Image
 }
 
+func newRGBA64FromImage(x image.Image) (m *RGBA64) {
+	b := x.Bounds()
+	rgba64 := NewRGBA64(b)
+	for y := b.Min.Y; y < b.Max.Y; y++ {
+		for x := b.Min.X; x < b.Max.X; x++ {
+			pr, pg, pb, pa := m.At(x, y).RGBA()
+			rgba64.SetRGBA64(x, y, color.RGBA64{
+				R: uint16(pr),
+				G: uint16(pg),
+				B: uint16(pb),
+				A: uint16(pa),
+			})
+		}
+	}
+	return rgba64
+}
+
 func AsImage(x image.Image) (m Image) {
 	if p, ok := x.(Image); ok {
 		return p
@@ -49,41 +66,56 @@ func AsImage(x image.Image) (m Image) {
 		return &RGBA64{x}
 	}
 
-	b := x.Bounds()
-	rgba64 := NewRGBA64(b)
-	dstColorRGBA64 := &color.RGBA64{}
-	dstColor := color.Color(dstColorRGBA64)
-	for y := b.Min.Y; y < b.Max.Y; y++ {
-		for x := b.Min.X; x < b.Max.X; x++ {
-			pr, pg, pb, pa := m.At(x, y).RGBA()
-			dstColorRGBA64.R = uint16(pr)
-			dstColorRGBA64.G = uint16(pg)
-			dstColorRGBA64.B = uint16(pb)
-			dstColorRGBA64.A = uint16(pa)
-			rgba64.Set(x, y, dstColor)
-		}
-	}
-
-	return rgba64
+	return newRGBA64FromImage(m)
 }
 
 func CopyImage(x image.Image) (m Image) {
-	if _, ok := x.(Image); ok {
-		// speed up
+	if x, ok := x.(Image); ok {
+		switch channels, depth := x.Channels(), x.Depth(); {
+		case channels == 1 && depth == reflect.Uint8:
+			return new(Gray).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+		case channels == 1 && depth == reflect.Uint16:
+			return new(Gray16).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+		case channels == 1 && depth == reflect.Float32:
+			return new(Gray32f).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+		case channels == 2 && depth == reflect.Uint8:
+			return new(GrayA).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+		case channels == 2 && depth == reflect.Uint16:
+			return new(GrayA32).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+		case channels == 2 && depth == reflect.Float32:
+			return new(GrayA64f).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+		case channels == 3 && depth == reflect.Uint8:
+			return new(RGB).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+		case channels == 3 && depth == reflect.Uint16:
+			return new(RGB48).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+		case channels == 3 && depth == reflect.Float32:
+			return new(RGB96f).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+		case channels == 4 && depth == reflect.Uint8:
+			return new(RGBA).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+		case channels == 4 && depth == reflect.Uint16:
+			return new(RGBA64).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+		case channels == 4 && depth == reflect.Float32:
+			return new(RGBA128f).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+		}
+
+		return new(Unknown).Init(
+			append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect(),
+			x.Channels(), x.Depth(),
+		)
 	}
 
-	switch x.(type) {
+	switch x := x.(type) {
 	case *image.Gray:
-		// speed up
+		return new(Gray).Init(append([]uint8(nil), x.Pix...), x.Stride, x.Rect)
 	case *image.Gray16:
-		// speed up
+		return new(Gray16).Init(append([]uint8(nil), x.Pix...), x.Stride, x.Rect)
 	case *image.RGBA:
-		// speed up
+		return new(RGBA).Init(append([]uint8(nil), x.Pix...), x.Stride, x.Rect)
 	case *image.RGBA64:
-		// speed up
+		return new(RGBA64).Init(append([]uint8(nil), x.Pix...), x.Stride, x.Rect)
 	}
 
-	panic("TODO")
+	return newRGBA64FromImage(m)
 }
 
 func ConvertImage(x image.Image, channels int, depth reflect.Kind) (m Image) {

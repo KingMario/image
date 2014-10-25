@@ -109,12 +109,11 @@ func (p *RGBA128f) Bounds() image.Rectangle { return p.M.Rect }
 
 func (p *RGBA128f) At(x, y int) color.Color {
 	c := p.RGBA128fAt(x, y)
-	rr, gg, bb, aa := colorRGBA128f(c).RGBA()
 	return color.RGBA64{
-		R: uint16(rr),
-		G: uint16(gg),
-		B: uint16(bb),
-		A: uint16(aa),
+		R: uint16(c[0]),
+		G: uint16(c[1]),
+		B: uint16(c[2]),
+		A: uint16(c[3]),
 	}
 }
 

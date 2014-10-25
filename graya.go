@@ -181,12 +181,11 @@ func (p *GrayA32) Bounds() image.Rectangle { return p.M.Rect }
 
 func (p *GrayA32) At(x, y int) color.Color {
 	c := p.GrayA32At(x, y)
-	rr, gg, bb, aa := colorGrayA32(c).RGBA()
 	return color.RGBA64{
-		R: uint16(rr),
-		G: uint16(gg),
-		B: uint16(bb),
-		A: uint16(aa),
+		R: c[0],
+		G: c[0],
+		B: c[0],
+		A: c[1],
 	}
 }
 
@@ -328,12 +327,11 @@ func (p *GrayA64f) Bounds() image.Rectangle { return p.M.Rect }
 
 func (p *GrayA64f) At(x, y int) color.Color {
 	c := p.GrayA64fAt(x, y)
-	rr, gg, bb, aa := colorGrayA64f(c).RGBA()
 	return color.RGBA64{
-		R: uint16(rr),
-		G: uint16(gg),
-		B: uint16(bb),
-		A: uint16(aa),
+		R: uint16(c[0]),
+		G: uint16(c[0]),
+		B: uint16(c[0]),
+		A: uint16(c[1]),
 	}
 }
 

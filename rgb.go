@@ -39,12 +39,11 @@ func (p *RGB) Bounds() image.Rectangle { return p.M.Rect }
 
 func (p *RGB) At(x, y int) color.Color {
 	c := p.RGBAt(x, y)
-	rr, gg, bb, aa := colorRGB(c).RGBA()
 	return color.RGBA{
-		R: uint8(rr >> 8),
-		G: uint8(gg >> 8),
-		B: uint8(bb >> 8),
-		A: uint8(aa >> 8),
+		R: c[0],
+		G: c[1],
+		B: c[2],
+		A: 0xFF,
 	}
 }
 
@@ -171,12 +170,11 @@ func (p *RGB48) Bounds() image.Rectangle { return p.M.Rect }
 
 func (p *RGB48) At(x, y int) color.Color {
 	c := p.RGB48At(x, y)
-	rr, gg, bb, aa := colorRGB48(c).RGBA()
 	return color.RGBA64{
-		R: uint16(rr),
-		G: uint16(gg),
-		B: uint16(bb),
-		A: uint16(aa),
+		R: c[0],
+		G: c[1],
+		B: c[2],
+		A: 0xFFFF,
 	}
 }
 
@@ -309,12 +307,11 @@ func (p *RGB96f) Bounds() image.Rectangle { return p.M.Rect }
 
 func (p *RGB96f) At(x, y int) color.Color {
 	c := p.RGB96fAt(x, y)
-	rr, gg, bb, aa := colorRGB96f(c).RGBA()
 	return color.RGBA64{
-		R: uint16(rr),
-		G: uint16(gg),
-		B: uint16(bb),
-		A: uint16(aa),
+		R: uint16(c[0]),
+		G: uint16(c[1]),
+		B: uint16(c[2]),
+		A: 0xFFFF,
 	}
 }
 
