@@ -50,82 +50,82 @@ func newRGBA64FromImage(x image.Image) (m *RGBA64) {
 	return rgba64
 }
 
-func AsImage(x image.Image) (m Image) {
-	if p, ok := x.(Image); ok {
+func AsImage(m image.Image) Image {
+	if p, ok := m.(Image); ok {
 		return p
 	}
 
-	switch x := x.(type) {
+	switch m := m.(type) {
 	case *image.Gray:
-		return &Gray{x}
+		return &Gray{m}
 	case *image.Gray16:
-		return &Gray16{x}
+		return &Gray16{m}
 	case *image.RGBA:
-		return &RGBA{x}
+		return &RGBA{m}
 	case *image.RGBA64:
-		return &RGBA64{x}
+		return &RGBA64{m}
 	}
 
 	return newRGBA64FromImage(m)
 }
 
-func CopyImage(x image.Image) (m Image) {
-	if x, ok := x.(Image); ok {
-		switch channels, depth := x.Channels(), x.Depth(); {
+func CopyImage(m image.Image) Image {
+	if m, ok := m.(Image); ok {
+		switch channels, depth := m.Channels(), m.Depth(); {
 		case channels == 1 && depth == reflect.Uint8:
-			return new(Gray).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+			return new(Gray).Init(append([]uint8(nil), m.Pix()...), m.Stride(), m.Rect())
 		case channels == 1 && depth == reflect.Uint16:
-			return new(Gray16).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+			return new(Gray16).Init(append([]uint8(nil), m.Pix()...), m.Stride(), m.Rect())
 		case channels == 1 && depth == reflect.Float32:
-			return new(Gray32f).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+			return new(Gray32f).Init(append([]uint8(nil), m.Pix()...), m.Stride(), m.Rect())
 		case channels == 2 && depth == reflect.Uint8:
-			return new(GrayA).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+			return new(GrayA).Init(append([]uint8(nil), m.Pix()...), m.Stride(), m.Rect())
 		case channels == 2 && depth == reflect.Uint16:
-			return new(GrayA32).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+			return new(GrayA32).Init(append([]uint8(nil), m.Pix()...), m.Stride(), m.Rect())
 		case channels == 2 && depth == reflect.Float32:
-			return new(GrayA64f).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+			return new(GrayA64f).Init(append([]uint8(nil), m.Pix()...), m.Stride(), m.Rect())
 		case channels == 3 && depth == reflect.Uint8:
-			return new(RGB).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+			return new(RGB).Init(append([]uint8(nil), m.Pix()...), m.Stride(), m.Rect())
 		case channels == 3 && depth == reflect.Uint16:
-			return new(RGB48).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+			return new(RGB48).Init(append([]uint8(nil), m.Pix()...), m.Stride(), m.Rect())
 		case channels == 3 && depth == reflect.Float32:
-			return new(RGB96f).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+			return new(RGB96f).Init(append([]uint8(nil), m.Pix()...), m.Stride(), m.Rect())
 		case channels == 4 && depth == reflect.Uint8:
-			return new(RGBA).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+			return new(RGBA).Init(append([]uint8(nil), m.Pix()...), m.Stride(), m.Rect())
 		case channels == 4 && depth == reflect.Uint16:
-			return new(RGBA64).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+			return new(RGBA64).Init(append([]uint8(nil), m.Pix()...), m.Stride(), m.Rect())
 		case channels == 4 && depth == reflect.Float32:
-			return new(RGBA128f).Init(append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect())
+			return new(RGBA128f).Init(append([]uint8(nil), m.Pix()...), m.Stride(), m.Rect())
 		}
 
 		return new(Unknown).Init(
-			append([]uint8(nil), x.Pix()...), x.Stride(), x.Rect(),
-			x.Channels(), x.Depth(),
+			append([]uint8(nil), m.Pix()...), m.Stride(), m.Rect(),
+			m.Channels(), m.Depth(),
 		)
 	}
 
-	switch x := x.(type) {
+	switch m := m.(type) {
 	case *image.Gray:
-		return new(Gray).Init(append([]uint8(nil), x.Pix...), x.Stride, x.Rect)
+		return new(Gray).Init(append([]uint8(nil), m.Pix...), m.Stride, m.Rect)
 	case *image.Gray16:
-		return new(Gray16).Init(append([]uint8(nil), x.Pix...), x.Stride, x.Rect)
+		return new(Gray16).Init(append([]uint8(nil), m.Pix...), m.Stride, m.Rect)
 	case *image.RGBA:
-		return new(RGBA).Init(append([]uint8(nil), x.Pix...), x.Stride, x.Rect)
+		return new(RGBA).Init(append([]uint8(nil), m.Pix...), m.Stride, m.Rect)
 	case *image.RGBA64:
-		return new(RGBA64).Init(append([]uint8(nil), x.Pix...), x.Stride, x.Rect)
+		return new(RGBA64).Init(append([]uint8(nil), m.Pix...), m.Stride, m.Rect)
 	}
 
 	return newRGBA64FromImage(m)
 }
 
-func ConvertImage(x image.Image, channels int, depth reflect.Kind) (m Image) {
-	if x, ok := x.(Image); ok {
-		if x.Channels() == channels && x.Depth() == depth {
+func ConvertImage(m image.Image, channels int, depth reflect.Kind) Image {
+	if m, ok := m.(Image); ok {
+		if m.Channels() == channels && m.Depth() == depth {
 			// speed up
 		}
 	}
 
-	switch x.(type) {
+	switch m.(type) {
 	case *image.Gray:
 		if channels == 1 && depth == reflect.Uint8 {
 			// speed up
@@ -147,14 +147,14 @@ func ConvertImage(x image.Image, channels int, depth reflect.Kind) (m Image) {
 	panic("TODO")
 }
 
-func CopyConvertImage(x image.Image, channels int, depth reflect.Kind) (m Image) {
-	if x, ok := x.(Image); ok {
-		if x.Channels() == channels && x.Depth() == depth {
+func CopyConvertImage(m image.Image, channels int, depth reflect.Kind) Image {
+	if m, ok := m.(Image); ok {
+		if m.Channels() == channels && m.Depth() == depth {
 			// speed up
 		}
 	}
 
-	switch x.(type) {
+	switch m.(type) {
 	case *image.Gray:
 		if channels == 1 && depth == reflect.Uint8 {
 			// speed up
