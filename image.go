@@ -168,6 +168,29 @@ func CopyImage(buf, src image.Image) (dst Image) {
 	return CloneImage(src)
 }
 
+func ConvertCopyImage(m image.Image, channels int, depth reflect.Kind) (Image, error) {
+	buf, err := NewImage(m.Bounds(), channels, depth)
+	if err != nil {
+		return nil, err
+	}
+	p := CopyImage(buf, m)
+	return p, nil
+}
+
+func ConvertImage(m image.Image, channels int, depth reflect.Kind) (Image, error) {
+	if p, ok := m.(Image); ok {
+		if channels == p.Channels() && depth == p.Depth() {
+			return p, nil
+		}
+	}
+	buf, err := NewImage(m.Bounds(), channels, depth)
+	if err != nil {
+		return nil, err
+	}
+	p := CopyImage(buf, m)
+	return p, nil
+}
+
 func NewImage(r image.Rectangle, channels int, depth reflect.Kind) (m Image, err error) {
 	switch {
 	case channels == 1 && depth == reflect.Uint8:
