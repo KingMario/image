@@ -53,6 +53,10 @@ func (p *Gray) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 	return p
 }
 
+func (p *Gray) CopyFrom(m image.Image) Image {
+	panic("TODO")
+}
+
 type Gray16 struct {
 	*image.Gray16
 }
@@ -86,6 +90,10 @@ func (p *Gray16) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 		},
 	}
 	return p
+}
+
+func (p *Gray16) CopyFrom(m image.Image) Image {
+	panic("TODO")
 }
 
 type Gray32f struct {
@@ -206,4 +214,8 @@ func (p *Gray32f) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 		},
 	}
 	return p
+}
+
+func (p *Gray32f) CopyFrom(m image.Image) Image {
+	panic("TODO")
 }

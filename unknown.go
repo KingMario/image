@@ -204,3 +204,7 @@ func (p *Unknown) Init(pix []uint8, stride int, rect image.Rectangle, channels i
 	p.M.Depth = depth
 	return p
 }
+
+func (p *Unknown) CopyFrom(m image.Image) Image {
+	panic("TODO")
+}

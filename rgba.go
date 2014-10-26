@@ -53,6 +53,10 @@ func (p *RGBA) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 	return p
 }
 
+func (p *RGBA) CopyFrom(m image.Image) Image {
+	panic("TODO")
+}
+
 type RGBA64 struct {
 	*image.RGBA64
 }
@@ -86,6 +90,10 @@ func (p *RGBA64) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 		},
 	}
 	return p
+}
+
+func (p *RGBA64) CopyFrom(m image.Image) Image {
+	panic("TODO")
 }
 
 type RGBA128f struct {
@@ -244,4 +252,8 @@ func (p *RGBA128f) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 		},
 	}
 	return p
+}
+
+func (p *RGBA128f) CopyFrom(m image.Image) Image {
+	panic("TODO")
 }

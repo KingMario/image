@@ -122,7 +122,50 @@ func CopyImage(buf, src image.Image) (dst Image) {
 	if buf == nil {
 		return CloneImage(src)
 	}
-	panic("TODO")
+
+	switch buf := buf.(type) {
+	case *image.Gray:
+		return (&Gray{buf}).CopyFrom(src)
+	case *image.Gray16:
+		return (&Gray16{buf}).CopyFrom(src)
+	case *image.RGBA:
+		return (&RGBA{buf}).CopyFrom(src)
+	case *image.RGBA64:
+		return (&RGBA64{buf}).CopyFrom(src)
+
+	case *Gray:
+		return buf.CopyFrom(src)
+	case *Gray16:
+		return buf.CopyFrom(src)
+	case *Gray32f:
+		return buf.CopyFrom(src)
+
+	case *GrayA:
+		return buf.CopyFrom(src)
+	case *GrayA32:
+		return buf.CopyFrom(src)
+	case *GrayA64f:
+		return buf.CopyFrom(src)
+
+	case *RGB:
+		return buf.CopyFrom(src)
+	case *RGB48:
+		return buf.CopyFrom(src)
+	case *RGB96f:
+		return buf.CopyFrom(src)
+
+	case *RGBA:
+		return buf.CopyFrom(src)
+	case *RGBA64:
+		return buf.CopyFrom(src)
+	case *RGBA128f:
+		return buf.CopyFrom(src)
+
+	case *Unknown:
+		return buf.CopyFrom(src)
+	}
+
+	return CloneImage(src)
 }
 
 func NewImage(r image.Rectangle, channels int, depth reflect.Kind) (m Image, err error) {

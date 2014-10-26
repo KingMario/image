@@ -149,6 +149,10 @@ func (p *RGB) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 	return p
 }
 
+func (p *RGB) CopyFrom(m image.Image) Image {
+	panic("TODO")
+}
+
 type RGB48 struct {
 	M struct {
 		Pix    []uint8
@@ -284,6 +288,10 @@ func (p *RGB48) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 		},
 	}
 	return p
+}
+
+func (p *RGB48) CopyFrom(m image.Image) Image {
+	panic("TODO")
 }
 
 type RGB96f struct {
@@ -423,4 +431,8 @@ func (p *RGB96f) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 		},
 	}
 	return p
+}
+
+func (p *RGB96f) CopyFrom(m image.Image) Image {
+	panic("TODO")
 }
