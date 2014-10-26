@@ -118,8 +118,8 @@ func CloneImage(m image.Image) Image {
 	return newRGBA64FromImage(m)
 }
 
-func CopyImage(dst, src image.Image) Image {
-	if dst == nil {
+func CopyImage(buf, src image.Image) (dst Image) {
+	if buf == nil {
 		return CloneImage(src)
 	}
 	panic("TODO")
