@@ -69,7 +69,7 @@ func AsImage(m image.Image) Image {
 	return newRGBA64FromImage(m)
 }
 
-func CopyImage(m image.Image) Image {
+func CloneImage(m image.Image) Image {
 	if m, ok := m.(Image); ok {
 		switch channels, depth := m.Channels(), m.Depth(); {
 		case channels == 1 && depth == reflect.Uint8:
@@ -118,61 +118,10 @@ func CopyImage(m image.Image) Image {
 	return newRGBA64FromImage(m)
 }
 
-func ConvertImage(m image.Image, channels int, depth reflect.Kind) Image {
-	if m, ok := m.(Image); ok {
-		if m.Channels() == channels && m.Depth() == depth {
-			// speed up
-		}
+func CopyImage(dst, src image.Image) Image {
+	if dst == nil {
+		return CloneImage(src)
 	}
-
-	switch m.(type) {
-	case *image.Gray:
-		if channels == 1 && depth == reflect.Uint8 {
-			// speed up
-		}
-	case *image.Gray16:
-		if channels == 1 && depth == reflect.Uint16 {
-			// speed up
-		}
-	case *image.RGBA:
-		if channels == 4 && depth == reflect.Uint8 {
-			// speed up
-		}
-	case *image.RGBA64:
-		if channels == 4 && depth == reflect.Uint16 {
-			// speed up
-		}
-	}
-
-	panic("TODO")
-}
-
-func CopyConvertImage(m image.Image, channels int, depth reflect.Kind) Image {
-	if m, ok := m.(Image); ok {
-		if m.Channels() == channels && m.Depth() == depth {
-			// speed up
-		}
-	}
-
-	switch m.(type) {
-	case *image.Gray:
-		if channels == 1 && depth == reflect.Uint8 {
-			// speed up
-		}
-	case *image.Gray16:
-		if channels == 1 && depth == reflect.Uint16 {
-			// speed up
-		}
-	case *image.RGBA:
-		if channels == 4 && depth == reflect.Uint8 {
-			// speed up
-		}
-	case *image.RGBA64:
-		if channels == 4 && depth == reflect.Uint16 {
-			// speed up
-		}
-	}
-
 	panic("TODO")
 }
 
