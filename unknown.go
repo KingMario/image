@@ -197,6 +197,6 @@ func (p *Unknown) CopyFrom(m image.Image) Image {
 	panic("TODO")
 }
 
-func (p *Unknown) Draw(dst Image, r image.Rectangle, src Image, sp image.Point) Image {
+func (p *Unknown) Draw(r image.Rectangle, src Image, sp image.Point) Image {
 	panic("TODO")
 }

@@ -127,6 +127,6 @@ func (p *RGB) CopyFrom(m image.Image) *RGB {
 	panic("TODO")
 }
 
-func (p *RGB) Draw(dst Image, r image.Rectangle, src Image, sp image.Point) Image {
+func (p *RGB) Draw(r image.Rectangle, src Image, sp image.Point) Image {
 	panic("TODO")
 }

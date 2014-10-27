@@ -118,6 +118,6 @@ func (p *Gray32f) CopyFrom(m image.Image) *Gray32f {
 	panic("TODO")
 }
 
-func (p *Gray32f) Draw(dst Image, r image.Rectangle, src Image, sp image.Point) Image {
+func (p *Gray32f) Draw(r image.Rectangle, src Image, sp image.Point) Image {
 	panic("TODO")
 }

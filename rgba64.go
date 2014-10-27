@@ -40,6 +40,6 @@ func (p *RGBA64) CopyFrom(m image.Image) *RGBA64 {
 	panic("TODO")
 }
 
-func (p *RGBA64) Draw(dst Image, r image.Rectangle, src Image, sp image.Point) Image {
+func (p *RGBA64) Draw(r image.Rectangle, src Image, sp image.Point) Image {
 	panic("TODO")
 }
