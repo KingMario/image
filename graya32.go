@@ -126,19 +126,7 @@ func (p *GrayA32) Opaque() bool {
 
 // NewGrayA32 returns a new GrayA32 with the given bounds.
 func NewGrayA32(r image.Rectangle) *GrayA32 {
-	w, h := r.Dx(), r.Dy()
-	pix := make([]uint8, 4*w*h)
-	return &GrayA32{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    pix,
-			Stride: 4 * w,
-			Rect:   r,
-		},
-	}
+	return new(GrayA32).Init(make([]uint8, 4*r.Dx()*r.Dy()), 4*r.Dx(), r)
 }
 
 func (p *GrayA32) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA32 {

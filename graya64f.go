@@ -123,19 +123,7 @@ func (p *GrayA64f) Opaque() bool {
 
 // NewGrayA64f returns a new GrayA64f with the given bounds.
 func NewGrayA64f(r image.Rectangle) *GrayA64f {
-	w, h := r.Dx(), r.Dy()
-	pix := make([]uint8, 8*w*h)
-	return &GrayA64f{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    pix,
-			Stride: 8 * w,
-			Rect:   r,
-		},
-	}
+	return new(GrayA64f).Init(make([]uint8, 8*r.Dx()*r.Dy()), 8*r.Dx(), r)
 }
 
 func (p *GrayA64f) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA64f {

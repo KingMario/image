@@ -176,27 +176,17 @@ func NewUnknown(r image.Rectangle, channels int, depth reflect.Kind) (m *Unknown
 		err = fmt.Errorf("image: NewUnknown, invalid format: channels = %d, depth = %v", channels, depth)
 		return
 	}
-	w, h := r.Dx(), r.Dy()
-	pix := make([]uint8, depthType(depth).ByteSize()*channels*w*h)
-	m = &Unknown{
-		M: struct {
-			Pix      []uint8
-			Stride   int
-			Rect     image.Rectangle
-			Channels int
-			Depth    reflect.Kind
-		}{
-			Pix:      pix,
-			Stride:   depthType(depth).ByteSize() * channels * w,
-			Rect:     r,
-			Channels: channels,
-			Depth:    depth,
-		},
-	}
+	m = new(Unknown).Init(
+		make([]uint8, depthType(depth).ByteSize()*channels*r.Dx()*r.Dy()),
+		depthType(depth).ByteSize()*channels*r.Dx(),
+		r,
+		channels,
+		depth,
+	)
 	return
 }
 
-func (p *Unknown) Init(pix []uint8, stride int, rect image.Rectangle, channels int, depth reflect.Kind) Image {
+func (p *Unknown) Init(pix []uint8, stride int, rect image.Rectangle, channels int, depth reflect.Kind) *Unknown {
 	p.M.Pix = pix
 	p.M.Stride = stride
 	p.M.Rect = rect

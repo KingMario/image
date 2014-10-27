@@ -122,19 +122,7 @@ func (p *GrayA) Opaque() bool {
 
 // NewGrayA returns a new GrayA with the given bounds.
 func NewGrayA(r image.Rectangle) *GrayA {
-	w, h := r.Dx(), r.Dy()
-	pix := make([]uint8, 2*w*h)
-	return &GrayA{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    pix,
-			Stride: 2 * w,
-			Rect:   r,
-		},
-	}
+	return new(GrayA).Init(make([]uint8, 2*r.Dx()*r.Dy()), 2*r.Dx(), r)
 }
 
 func (p *GrayA) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA {

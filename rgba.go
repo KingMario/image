@@ -22,15 +22,7 @@ func (p *RGBA) Depth() reflect.Kind   { return reflect.Uint8 }
 
 // NewRGBA returns a new RGBA with the given bounds.
 func NewRGBA(r image.Rectangle) *RGBA {
-	w, h := r.Dx(), r.Dy()
-	pix := make([]uint8, 4*w*h)
-	return &RGBA{
-		RGBA: &image.RGBA{
-			Pix:    pix,
-			Stride: 4 * w,
-			Rect:   r,
-		},
-	}
+	return new(RGBA).Init(make([]uint8, 4*r.Dx()*r.Dy()), 4*r.Dx(), r)
 }
 
 func (p *RGBA) Init(pix []uint8, stride int, rect image.Rectangle) *RGBA {

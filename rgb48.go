@@ -117,19 +117,7 @@ func (p *RGB48) Opaque() bool {
 
 // NewRGB48 returns a new RGB48 with the given bounds.
 func NewRGB48(r image.Rectangle) *RGB48 {
-	w, h := r.Dx(), r.Dy()
-	pix := make([]uint8, 6*w*h)
-	return &RGB48{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    pix,
-			Stride: 6 * w,
-			Rect:   r,
-		},
-	}
+	return new(RGB48).Init(make([]uint8, 6*r.Dx()*r.Dy()), 6*r.Dx(), r)
 }
 
 func (p *RGB48) Init(pix []uint8, stride int, rect image.Rectangle) *RGB48 {

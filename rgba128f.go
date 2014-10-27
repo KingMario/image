@@ -140,19 +140,7 @@ func (p *RGBA128f) Opaque() bool {
 
 // NewRGBA128f returns a new RGBA128f with the given bounds.
 func NewRGBA128f(r image.Rectangle) *RGBA128f {
-	w, h := r.Dx(), r.Dy()
-	pix := make([]uint8, 16*w*h)
-	return &RGBA128f{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    pix,
-			Stride: 16 * w,
-			Rect:   r,
-		},
-	}
+	return new(RGBA128f).Init(make([]uint8, 4*r.Dx()*r.Dy()), 4*r.Dx(), r)
 }
 
 func (p *RGBA128f) Init(pix []uint8, stride int, rect image.Rectangle) *RGBA128f {

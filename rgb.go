@@ -111,19 +111,7 @@ func (p *RGB) Opaque() bool {
 
 // NewRGB returns a new RGB with the given bounds.
 func NewRGB(r image.Rectangle) *RGB {
-	w, h := r.Dx(), r.Dy()
-	pix := make([]uint8, 3*w*h)
-	return &RGB{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    pix,
-			Stride: 3 * w,
-			Rect:   r,
-		},
-	}
+	return new(RGB).Init(make([]uint8, 3*r.Dx()*r.Dy()), 3*r.Dx(), r)
 }
 
 func (p *RGB) Init(pix []uint8, stride int, rect image.Rectangle) *RGB {

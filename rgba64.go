@@ -22,15 +22,7 @@ func (p *RGBA64) Depth() reflect.Kind   { return reflect.Uint16 }
 
 // NewRGBA64 returns a new RGBA64 with the given bounds.
 func NewRGBA64(r image.Rectangle) *RGBA64 {
-	w, h := r.Dx(), r.Dy()
-	pix := make([]uint8, 8*w*h)
-	return &RGBA64{
-		RGBA64: &image.RGBA64{
-			Pix:    pix,
-			Stride: 8 * w,
-			Rect:   r,
-		},
-	}
+	return new(RGBA64).Init(make([]uint8, 4*r.Dx()*r.Dy()), 4*r.Dx(), r)
 }
 
 func (p *RGBA64) Init(pix []uint8, stride int, rect image.Rectangle) *RGBA64 {

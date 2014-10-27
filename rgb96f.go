@@ -121,19 +121,7 @@ func (p *RGB96f) Opaque() bool {
 
 // NewRGB96f returns a new RGB96f with the given bounds.
 func NewRGB96f(r image.Rectangle) *RGB96f {
-	w, h := r.Dx(), r.Dy()
-	pix := make([]uint8, 12*w*h)
-	return &RGB96f{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    pix,
-			Stride: 12 * w,
-			Rect:   r,
-		},
-	}
+	return new(RGB96f).Init(make([]uint8, 12*r.Dx()*r.Dy()), 12*r.Dx(), r)
 }
 
 func (p *RGB96f) Init(pix []uint8, stride int, rect image.Rectangle) *RGB96f {

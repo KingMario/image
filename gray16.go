@@ -22,15 +22,7 @@ func (p *Gray16) Depth() reflect.Kind   { return reflect.Uint16 }
 
 // NewGray16 returns a new Gray16 with the given bounds.
 func NewGray16(r image.Rectangle) *Gray16 {
-	w, h := r.Dx(), r.Dy()
-	pix := make([]uint8, 2*w*h)
-	return &Gray16{
-		Gray16: &image.Gray16{
-			Pix:    pix,
-			Stride: 2 * w,
-			Rect:   r,
-		},
-	}
+	return new(Gray16).Init(make([]uint8, 2*r.Dx()*r.Dy()), 2*r.Dx(), r)
 }
 
 func (p *Gray16) Init(pix []uint8, stride int, rect image.Rectangle) *Gray16 {

@@ -22,15 +22,7 @@ func (p *Gray) Depth() reflect.Kind   { return reflect.Uint8 }
 
 // NewGray returns a new Gray with the given bounds.
 func NewGray(r image.Rectangle) *Gray {
-	w, h := r.Dx(), r.Dy()
-	pix := make([]uint8, 1*w*h)
-	return &Gray{
-		Gray: &image.Gray{
-			Pix:    pix,
-			Stride: 1 * w,
-			Rect:   r,
-		},
-	}
+	return new(Gray).Init(make([]uint8, 1*r.Dx()*r.Dy()), 1*r.Dx(), r)
 }
 
 func (p *Gray) Init(pix []uint8, stride int, rect image.Rectangle) *Gray {
