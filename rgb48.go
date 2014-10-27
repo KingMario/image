@@ -132,3 +132,7 @@ func (p *RGB48) Opaque() bool {
 func (p *RGB48) CopyFrom(m image.Image) *RGB48 {
 	panic("TODO")
 }
+
+func (p *RGB48) Draw(dst Image, r image.Rectangle, src Image, sp image.Point) Image {
+	panic("TODO")
+}

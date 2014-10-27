@@ -39,3 +39,7 @@ func (p *Gray) Depth() reflect.Kind   { return reflect.Uint8 }
 func (p *Gray) CopyFrom(m image.Image) *Gray {
 	panic("TODO")
 }
+
+func (p *Gray) Draw(dst Image, r image.Rectangle, src Image, sp image.Point) Image {
+	panic("TODO")
+}

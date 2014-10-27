@@ -39,3 +39,7 @@ func (p *RGBA64) Depth() reflect.Kind   { return reflect.Uint16 }
 func (p *RGBA64) CopyFrom(m image.Image) *RGBA64 {
 	panic("TODO")
 }
+
+func (p *RGBA64) Draw(dst Image, r image.Rectangle, src Image, sp image.Point) Image {
+	panic("TODO")
+}
