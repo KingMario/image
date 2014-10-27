@@ -145,7 +145,7 @@ func NewGrayA(r image.Rectangle) *GrayA {
 	}
 }
 
-func (p *GrayA) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+func (p *GrayA) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA {
 	*p = GrayA{
 		M: struct {
 			Pix    []uint8
@@ -160,7 +160,7 @@ func (p *GrayA) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 	return p
 }
 
-func (p *GrayA) CopyFrom(m image.Image) Image {
+func (p *GrayA) CopyFrom(m image.Image) *GrayA {
 	panic("TODO")
 }
 
@@ -295,7 +295,7 @@ func NewGrayA32(r image.Rectangle) *GrayA32 {
 	}
 }
 
-func (p *GrayA32) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+func (p *GrayA32) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA32 {
 	*p = GrayA32{
 		M: struct {
 			Pix    []uint8
@@ -310,7 +310,7 @@ func (p *GrayA32) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 	return p
 }
 
-func (p *GrayA32) CopyFrom(m image.Image) Image {
+func (p *GrayA32) CopyFrom(m image.Image) *GrayA32 {
 	panic("TODO")
 }
 
@@ -440,7 +440,7 @@ func NewGrayA64f(r image.Rectangle) *GrayA64f {
 	}
 }
 
-func (p *GrayA64f) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+func (p *GrayA64f) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA64f {
 	*p = GrayA64f{
 		M: struct {
 			Pix    []uint8
@@ -455,6 +455,6 @@ func (p *GrayA64f) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 	return p
 }
 
-func (p *GrayA64f) CopyFrom(m image.Image) Image {
+func (p *GrayA64f) CopyFrom(m image.Image) *GrayA64f {
 	panic("TODO")
 }

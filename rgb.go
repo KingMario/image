@@ -134,7 +134,7 @@ func NewRGB(r image.Rectangle) *RGB {
 	}
 }
 
-func (p *RGB) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+func (p *RGB) Init(pix []uint8, stride int, rect image.Rectangle) *RGB {
 	*p = RGB{
 		M: struct {
 			Pix    []uint8
@@ -149,7 +149,7 @@ func (p *RGB) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 	return p
 }
 
-func (p *RGB) CopyFrom(m image.Image) Image {
+func (p *RGB) CopyFrom(m image.Image) *RGB {
 	panic("TODO")
 }
 
@@ -275,7 +275,7 @@ func NewRGB48(r image.Rectangle) *RGB48 {
 	}
 }
 
-func (p *RGB48) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+func (p *RGB48) Init(pix []uint8, stride int, rect image.Rectangle) *RGB48 {
 	*p = RGB48{
 		M: struct {
 			Pix    []uint8
@@ -290,7 +290,7 @@ func (p *RGB48) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 	return p
 }
 
-func (p *RGB48) CopyFrom(m image.Image) Image {
+func (p *RGB48) CopyFrom(m image.Image) *RGB48 {
 	panic("TODO")
 }
 
@@ -418,7 +418,7 @@ func NewRGB96f(r image.Rectangle) *RGB96f {
 	}
 }
 
-func (p *RGB96f) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+func (p *RGB96f) Init(pix []uint8, stride int, rect image.Rectangle) *RGB96f {
 	*p = RGB96f{
 		M: struct {
 			Pix    []uint8
@@ -433,6 +433,6 @@ func (p *RGB96f) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 	return p
 }
 
-func (p *RGB96f) CopyFrom(m image.Image) Image {
+func (p *RGB96f) CopyFrom(m image.Image) *RGB96f {
 	panic("TODO")
 }

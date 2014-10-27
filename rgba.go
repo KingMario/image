@@ -42,7 +42,7 @@ func NewRGBA(r image.Rectangle) *RGBA {
 	}
 }
 
-func (p *RGBA) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+func (p *RGBA) Init(pix []uint8, stride int, rect image.Rectangle) *RGBA {
 	*p = RGBA{
 		RGBA: &image.RGBA{
 			Pix:    pix,
@@ -53,7 +53,7 @@ func (p *RGBA) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 	return p
 }
 
-func (p *RGBA) CopyFrom(m image.Image) Image {
+func (p *RGBA) CopyFrom(m image.Image) *RGBA {
 	panic("TODO")
 }
 
@@ -81,7 +81,7 @@ func NewRGBA64(r image.Rectangle) *RGBA64 {
 	}
 }
 
-func (p *RGBA64) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+func (p *RGBA64) Init(pix []uint8, stride int, rect image.Rectangle) *RGBA64 {
 	*p = RGBA64{
 		RGBA64: &image.RGBA64{
 			Pix:    pix,
@@ -92,7 +92,7 @@ func (p *RGBA64) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 	return p
 }
 
-func (p *RGBA64) CopyFrom(m image.Image) Image {
+func (p *RGBA64) CopyFrom(m image.Image) *RGBA64 {
 	panic("TODO")
 }
 
@@ -239,7 +239,7 @@ func NewRGBA128f(r image.Rectangle) *RGBA128f {
 	}
 }
 
-func (p *RGBA128f) Init(pix []uint8, stride int, rect image.Rectangle) Image {
+func (p *RGBA128f) Init(pix []uint8, stride int, rect image.Rectangle) *RGBA128f {
 	*p = RGBA128f{
 		M: struct {
 			Pix    []uint8
@@ -254,6 +254,6 @@ func (p *RGBA128f) Init(pix []uint8, stride int, rect image.Rectangle) Image {
 	return p
 }
 
-func (p *RGBA128f) CopyFrom(m image.Image) Image {
+func (p *RGBA128f) CopyFrom(m image.Image) *RGBA128f {
 	panic("TODO")
 }
