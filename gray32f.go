@@ -5,12 +5,14 @@
 package image
 
 import (
+	"encoding/binary"
 	"image"
 	"image/color"
+	"math"
 	"reflect"
 )
 
-type RGB struct {
+type Gray32f struct {
 	M struct {
 		Pix    []uint8
 		Stride int
@@ -18,80 +20,69 @@ type RGB struct {
 	}
 }
 
-func (p *RGB) BaseType() image.Image { return p }
-func (p *RGB) Pix() []byte           { return p.M.Pix }
-func (p *RGB) Stride() int           { return p.M.Stride }
-func (p *RGB) Rect() image.Rectangle { return p.M.Rect }
-func (p *RGB) Channels() int         { return 3 }
-func (p *RGB) Depth() reflect.Kind   { return reflect.Uint8 }
+func (p *Gray32f) BaseType() image.Image { return p }
+func (p *Gray32f) Pix() []byte           { return p.M.Pix }
+func (p *Gray32f) Stride() int           { return p.M.Stride }
+func (p *Gray32f) Rect() image.Rectangle { return p.M.Rect }
+func (p *Gray32f) Channels() int         { return 1 }
+func (p *Gray32f) Depth() reflect.Kind   { return reflect.Float32 }
 
-func (p *RGB) ColorModel() color.Model { return color.RGBAModel }
+func (p *Gray32f) ColorModel() color.Model { return color.Gray16Model }
 
-func (p *RGB) Bounds() image.Rectangle { return p.M.Rect }
+func (p *Gray32f) Bounds() image.Rectangle { return p.M.Rect }
 
-func (p *RGB) At(x, y int) color.Color {
-	c := p.RGBAt(x, y)
-	return color.RGBA{
-		R: c[0],
-		G: c[1],
-		B: c[2],
-		A: 0xFF,
+func (p *Gray32f) At(x, y int) color.Color {
+	return color.Gray16{
+		Y: uint16(p.Gray32fAt(x, y)),
 	}
 }
 
-func (p *RGB) RGBAt(x, y int) [3]uint8 {
+func (p *Gray32f) Gray32fAt(x, y int) float32 {
 	if !(image.Point{x, y}.In(p.M.Rect)) {
-		return [3]uint8{}
+		return 0
 	}
 	i := p.PixOffset(x, y)
-	return [3]uint8{
-		p.M.Pix[i+0],
-		p.M.Pix[i+1],
-		p.M.Pix[i+2],
-	}
+	v := math.Float32frombits(binary.BigEndian.Uint32(p.M.Pix[i:]))
+	return v
 }
 
 // PixOffset returns the index of the first element of Pix that corresponds to
 // the pixel at (x, y).
-func (p *RGB) PixOffset(x, y int) int {
-	return (y-p.M.Rect.Min.Y)*p.M.Stride + (x-p.M.Rect.Min.X)*3
+func (p *Gray32f) PixOffset(x, y int) int {
+	return (y-p.M.Rect.Min.Y)*p.M.Stride + (x-p.M.Rect.Min.X)*4
 }
 
-func (p *RGB) Set(x, y int, c color.Color) {
+func (p *Gray32f) Set(x, y int, c color.Color) {
 	if !(image.Point{x, y}.In(p.M.Rect)) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	c1 := color.RGBAModel.Convert(c).(color.RGBA)
-	p.M.Pix[i+0] = c1.R
-	p.M.Pix[i+1] = c1.G
-	p.M.Pix[i+2] = c1.B
+	v := float32(color.Gray16Model.Convert(c).(color.Gray16).Y)
+	binary.BigEndian.PutUint32(p.M.Pix[i:], math.Float32bits(v))
 	return
 }
 
-func (p *RGB) SetRGB(x, y int, c [3]uint8) {
+func (p *Gray32f) SetGray32f(x, y int, c float32) {
 	if !(image.Point{x, y}.In(p.M.Rect)) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	p.M.Pix[i+0] = c[0]
-	p.M.Pix[i+1] = c[1]
-	p.M.Pix[i+2] = c[2]
+	binary.BigEndian.PutUint32(p.M.Pix[i:], math.Float32bits(c))
 	return
 }
 
 // SubImage returns an image representing the portion of the image p visible
 // through r. The returned value shares pixels with the original image.
-func (p *RGB) SubImage(r image.Rectangle) image.Image {
+func (p *Gray32f) SubImage(r image.Rectangle) image.Image {
 	r = r.Intersect(p.M.Rect)
 	// If r1 and r2 are Rectangles, r1.Intersect(r2) is not guaranteed to be inside
 	// either r1 or r2 if the intersection is empty. Without explicitly checking for
 	// this, the Pix[i:] expression below can panic.
 	if r.Empty() {
-		return &RGB{}
+		return &Gray32f{}
 	}
 	i := p.PixOffset(r.Min.X, r.Min.Y)
-	return &RGB{
+	return &Gray32f{
 		M: struct {
 			Pix    []uint8
 			Stride int
@@ -105,29 +96,29 @@ func (p *RGB) SubImage(r image.Rectangle) image.Image {
 }
 
 // Opaque scans the entire image and reports whether it is fully opaque.
-func (p *RGB) Opaque() bool {
+func (p *Gray32f) Opaque() bool {
 	return true
 }
 
-// NewRGB returns a new RGB with the given bounds.
-func NewRGB(r image.Rectangle) *RGB {
+// NewGray32f returns a new Gray32f with the given bounds.
+func NewGray32f(r image.Rectangle) *Gray32f {
 	w, h := r.Dx(), r.Dy()
-	pix := make([]uint8, 3*w*h)
-	return &RGB{
+	pix := make([]uint8, 4*w*h)
+	return &Gray32f{
 		M: struct {
 			Pix    []uint8
 			Stride int
 			Rect   image.Rectangle
 		}{
 			Pix:    pix,
-			Stride: 3 * w,
+			Stride: 4 * w,
 			Rect:   r,
 		},
 	}
 }
 
-func (p *RGB) Init(pix []uint8, stride int, rect image.Rectangle) *RGB {
-	*p = RGB{
+func (p *Gray32f) Init(pix []uint8, stride int, rect image.Rectangle) *Gray32f {
+	*p = Gray32f{
 		M: struct {
 			Pix    []uint8
 			Stride int
@@ -141,6 +132,6 @@ func (p *RGB) Init(pix []uint8, stride int, rect image.Rectangle) *RGB {
 	return p
 }
 
-func (p *RGB) CopyFrom(m image.Image) *RGB {
+func (p *Gray32f) CopyFrom(m image.Image) *Gray32f {
 	panic("TODO")
 }

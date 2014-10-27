@@ -11,6 +11,21 @@ import (
 	"reflect"
 )
 
+var (
+	_ Image = (*Gray)(nil)
+	_ Image = (*Gray16)(nil)
+	_ Image = (*Gray32f)(nil)
+	_ Image = (*GrayA)(nil)
+	_ Image = (*GrayA32)(nil)
+	_ Image = (*GrayA64f)(nil)
+	_ Image = (*RGB)(nil)
+	_ Image = (*RGB48)(nil)
+	_ Image = (*RGB96f)(nil)
+	_ Image = (*RGBA)(nil)
+	_ Image = (*RGBA64)(nil)
+	_ Image = (*RGBA128f)(nil)
+)
+
 type Image interface {
 	// Get original type, such as *image.Gray, *image.RGBA, etc.
 	BaseType() image.Image
