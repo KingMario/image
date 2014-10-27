@@ -153,21 +153,13 @@ func (p *Unknown) SubImage(r image.Rectangle) image.Image {
 		return &Unknown{}
 	}
 	i := p.PixOffset(r.Min.X, r.Min.Y)
-	return &Unknown{
-		M: struct {
-			Pix      []uint8
-			Stride   int
-			Rect     image.Rectangle
-			Channels int
-			Depth    reflect.Kind
-		}{
-			Pix:      p.M.Pix[i:],
-			Stride:   p.M.Stride,
-			Rect:     r,
-			Channels: p.M.Channels,
-			Depth:    p.M.Depth,
-		},
-	}
+	return new(Unknown).Init(
+		p.M.Pix[i:],
+		p.M.Stride,
+		r,
+		p.M.Channels,
+		p.M.Depth,
+	)
 }
 
 // NewUnknown returns a new Unknown with the given bounds.
@@ -187,11 +179,21 @@ func NewUnknown(r image.Rectangle, channels int, depth reflect.Kind) (m *Unknown
 }
 
 func (p *Unknown) Init(pix []uint8, stride int, rect image.Rectangle, channels int, depth reflect.Kind) *Unknown {
-	p.M.Pix = pix
-	p.M.Stride = stride
-	p.M.Rect = rect
-	p.M.Channels = channels
-	p.M.Depth = depth
+	*p = Unknown{
+		M: struct {
+			Pix      []uint8
+			Stride   int
+			Rect     image.Rectangle
+			Channels int
+			Depth    reflect.Kind
+		}{
+			Pix:      pix,
+			Stride:   stride,
+			Rect:     rect,
+			Channels: channels,
+			Depth:    depth,
+		},
+	}
 	return p
 }
 

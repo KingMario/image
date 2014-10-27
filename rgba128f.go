@@ -107,17 +107,11 @@ func (p *RGBA128f) SubImage(r image.Rectangle) image.Image {
 		return &RGBA128f{}
 	}
 	i := p.PixOffset(r.Min.X, r.Min.Y)
-	return &RGBA128f{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    p.M.Pix[i:],
-			Stride: p.M.Stride,
-			Rect:   r,
-		},
-	}
+	return new(RGBA128f).Init(
+		p.M.Pix[i:],
+		p.M.Stride,
+		r,
+	)
 }
 
 // Opaque scans the entire image and reports whether it is fully opaque.

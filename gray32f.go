@@ -82,17 +82,11 @@ func (p *Gray32f) SubImage(r image.Rectangle) image.Image {
 		return &Gray32f{}
 	}
 	i := p.PixOffset(r.Min.X, r.Min.Y)
-	return &Gray32f{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    p.M.Pix[i:],
-			Stride: p.M.Stride,
-			Rect:   r,
-		},
-	}
+	return new(Gray32f).Init(
+		p.M.Pix[i:],
+		p.M.Stride,
+		r,
+	)
 }
 
 // Opaque scans the entire image and reports whether it is fully opaque.
