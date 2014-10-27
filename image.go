@@ -24,6 +24,7 @@ var (
 	_ Image = (*RGBA)(nil)
 	_ Image = (*RGBA64)(nil)
 	_ Image = (*RGBA128f)(nil)
+	_ Image = (*Unknown)(nil)
 )
 
 type Image interface {

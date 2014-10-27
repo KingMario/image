@@ -18,6 +18,26 @@ type RGB struct {
 	}
 }
 
+// NewRGB returns a new RGB with the given bounds.
+func NewRGB(r image.Rectangle) *RGB {
+	return new(RGB).Init(make([]uint8, 3*r.Dx()*r.Dy()), 3*r.Dx(), r)
+}
+
+func (p *RGB) Init(pix []uint8, stride int, rect image.Rectangle) *RGB {
+	*p = RGB{
+		M: struct {
+			Pix    []uint8
+			Stride int
+			Rect   image.Rectangle
+		}{
+			Pix:    p.M.Pix,
+			Stride: p.M.Stride,
+			Rect:   p.M.Rect,
+		},
+	}
+	return p
+}
+
 func (p *RGB) BaseType() image.Image { return p }
 func (p *RGB) Pix() []byte           { return p.M.Pix }
 func (p *RGB) Stride() int           { return p.M.Stride }
@@ -101,26 +121,6 @@ func (p *RGB) SubImage(r image.Rectangle) image.Image {
 // Opaque scans the entire image and reports whether it is fully opaque.
 func (p *RGB) Opaque() bool {
 	return true
-}
-
-// NewRGB returns a new RGB with the given bounds.
-func NewRGB(r image.Rectangle) *RGB {
-	return new(RGB).Init(make([]uint8, 3*r.Dx()*r.Dy()), 3*r.Dx(), r)
-}
-
-func (p *RGB) Init(pix []uint8, stride int, rect image.Rectangle) *RGB {
-	*p = RGB{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    p.M.Pix,
-			Stride: p.M.Stride,
-			Rect:   p.M.Rect,
-		},
-	}
-	return p
 }
 
 func (p *RGB) CopyFrom(m image.Image) *RGB {

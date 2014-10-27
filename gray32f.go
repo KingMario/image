@@ -20,6 +20,26 @@ type Gray32f struct {
 	}
 }
 
+// NewGray32f returns a new Gray32f with the given bounds.
+func NewGray32f(r image.Rectangle) *Gray32f {
+	return new(Gray32f).Init(make([]uint8, 4*r.Dx()*r.Dy()), 4*r.Dx(), r)
+}
+
+func (p *Gray32f) Init(pix []uint8, stride int, rect image.Rectangle) *Gray32f {
+	*p = Gray32f{
+		M: struct {
+			Pix    []uint8
+			Stride int
+			Rect   image.Rectangle
+		}{
+			Pix:    p.M.Pix,
+			Stride: p.M.Stride,
+			Rect:   p.M.Rect,
+		},
+	}
+	return p
+}
+
 func (p *Gray32f) BaseType() image.Image { return p }
 func (p *Gray32f) Pix() []byte           { return p.M.Pix }
 func (p *Gray32f) Stride() int           { return p.M.Stride }
@@ -92,26 +112,6 @@ func (p *Gray32f) SubImage(r image.Rectangle) image.Image {
 // Opaque scans the entire image and reports whether it is fully opaque.
 func (p *Gray32f) Opaque() bool {
 	return true
-}
-
-// NewGray32f returns a new Gray32f with the given bounds.
-func NewGray32f(r image.Rectangle) *Gray32f {
-	return new(Gray32f).Init(make([]uint8, 4*r.Dx()*r.Dy()), 4*r.Dx(), r)
-}
-
-func (p *Gray32f) Init(pix []uint8, stride int, rect image.Rectangle) *Gray32f {
-	*p = Gray32f{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    p.M.Pix,
-			Stride: p.M.Stride,
-			Rect:   p.M.Rect,
-		},
-	}
-	return p
 }
 
 func (p *Gray32f) CopyFrom(m image.Image) *Gray32f {

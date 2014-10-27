@@ -18,6 +18,26 @@ type GrayA struct {
 	}
 }
 
+// NewGrayA returns a new GrayA with the given bounds.
+func NewGrayA(r image.Rectangle) *GrayA {
+	return new(GrayA).Init(make([]uint8, 2*r.Dx()*r.Dy()), 2*r.Dx(), r)
+}
+
+func (p *GrayA) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA {
+	*p = GrayA{
+		M: struct {
+			Pix    []uint8
+			Stride int
+			Rect   image.Rectangle
+		}{
+			Pix:    p.M.Pix,
+			Stride: p.M.Stride,
+			Rect:   p.M.Rect,
+		},
+	}
+	return p
+}
+
 func (p *GrayA) BaseType() image.Image { return p }
 func (p *GrayA) Pix() []byte           { return p.M.Pix }
 func (p *GrayA) Stride() int           { return p.M.Stride }
@@ -112,26 +132,6 @@ func (p *GrayA) Opaque() bool {
 		i1 += p.M.Stride
 	}
 	return true
-}
-
-// NewGrayA returns a new GrayA with the given bounds.
-func NewGrayA(r image.Rectangle) *GrayA {
-	return new(GrayA).Init(make([]uint8, 2*r.Dx()*r.Dy()), 2*r.Dx(), r)
-}
-
-func (p *GrayA) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA {
-	*p = GrayA{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    p.M.Pix,
-			Stride: p.M.Stride,
-			Rect:   p.M.Rect,
-		},
-	}
-	return p
 }
 
 func (p *GrayA) CopyFrom(m image.Image) *GrayA {

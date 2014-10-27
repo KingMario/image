@@ -20,6 +20,26 @@ type GrayA64f struct {
 	}
 }
 
+// NewGrayA64f returns a new GrayA64f with the given bounds.
+func NewGrayA64f(r image.Rectangle) *GrayA64f {
+	return new(GrayA64f).Init(make([]uint8, 8*r.Dx()*r.Dy()), 8*r.Dx(), r)
+}
+
+func (p *GrayA64f) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA64f {
+	*p = GrayA64f{
+		M: struct {
+			Pix    []uint8
+			Stride int
+			Rect   image.Rectangle
+		}{
+			Pix:    p.M.Pix,
+			Stride: p.M.Stride,
+			Rect:   p.M.Rect,
+		},
+	}
+	return p
+}
+
 func (p *GrayA64f) BaseType() image.Image { return p }
 func (p *GrayA64f) Pix() []byte           { return p.M.Pix }
 func (p *GrayA64f) Stride() int           { return p.M.Stride }
@@ -113,26 +133,6 @@ func (p *GrayA64f) Opaque() bool {
 		i1 += p.M.Stride
 	}
 	return true
-}
-
-// NewGrayA64f returns a new GrayA64f with the given bounds.
-func NewGrayA64f(r image.Rectangle) *GrayA64f {
-	return new(GrayA64f).Init(make([]uint8, 8*r.Dx()*r.Dy()), 8*r.Dx(), r)
-}
-
-func (p *GrayA64f) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA64f {
-	*p = GrayA64f{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    p.M.Pix,
-			Stride: p.M.Stride,
-			Rect:   p.M.Rect,
-		},
-	}
-	return p
 }
 
 func (p *GrayA64f) CopyFrom(m image.Image) *GrayA64f {

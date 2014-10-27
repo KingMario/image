@@ -20,6 +20,26 @@ type RGB96f struct {
 	}
 }
 
+// NewRGB96f returns a new RGB96f with the given bounds.
+func NewRGB96f(r image.Rectangle) *RGB96f {
+	return new(RGB96f).Init(make([]uint8, 12*r.Dx()*r.Dy()), 12*r.Dx(), r)
+}
+
+func (p *RGB96f) Init(pix []uint8, stride int, rect image.Rectangle) *RGB96f {
+	*p = RGB96f{
+		M: struct {
+			Pix    []uint8
+			Stride int
+			Rect   image.Rectangle
+		}{
+			Pix:    p.M.Pix,
+			Stride: p.M.Stride,
+			Rect:   p.M.Rect,
+		},
+	}
+	return p
+}
+
 func (p *RGB96f) BaseType() image.Image { return p }
 func (p *RGB96f) Pix() []byte           { return p.M.Pix }
 func (p *RGB96f) Stride() int           { return p.M.Stride }
@@ -111,26 +131,6 @@ func (p *RGB96f) SubImage(r image.Rectangle) image.Image {
 // Opaque scans the entire image and reports whether it is fully opaque.
 func (p *RGB96f) Opaque() bool {
 	return true
-}
-
-// NewRGB96f returns a new RGB96f with the given bounds.
-func NewRGB96f(r image.Rectangle) *RGB96f {
-	return new(RGB96f).Init(make([]uint8, 12*r.Dx()*r.Dy()), 12*r.Dx(), r)
-}
-
-func (p *RGB96f) Init(pix []uint8, stride int, rect image.Rectangle) *RGB96f {
-	*p = RGB96f{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    p.M.Pix,
-			Stride: p.M.Stride,
-			Rect:   p.M.Rect,
-		},
-	}
-	return p
 }
 
 func (p *RGB96f) CopyFrom(m image.Image) *RGB96f {

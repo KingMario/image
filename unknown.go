@@ -11,10 +11,6 @@ import (
 	"reflect"
 )
 
-var (
-	_ Image = (*Unknown)(nil)
-)
-
 type Unknown struct {
 	M struct {
 		Pix      []uint8
@@ -23,6 +19,41 @@ type Unknown struct {
 		Channels int
 		Depth    reflect.Kind
 	}
+}
+
+// NewUnknown returns a new Unknown with the given bounds.
+func NewUnknown(r image.Rectangle, channels int, depth reflect.Kind) (m *Unknown, err error) {
+	if channels <= 0 || !depthType(depth).IsValid() {
+		err = fmt.Errorf("image: NewUnknown, invalid format: channels = %d, depth = %v", channels, depth)
+		return
+	}
+	m = new(Unknown).Init(
+		make([]uint8, depthType(depth).ByteSize()*channels*r.Dx()*r.Dy()),
+		depthType(depth).ByteSize()*channels*r.Dx(),
+		r,
+		channels,
+		depth,
+	)
+	return
+}
+
+func (p *Unknown) Init(pix []uint8, stride int, rect image.Rectangle, channels int, depth reflect.Kind) *Unknown {
+	*p = Unknown{
+		M: struct {
+			Pix      []uint8
+			Stride   int
+			Rect     image.Rectangle
+			Channels int
+			Depth    reflect.Kind
+		}{
+			Pix:      pix,
+			Stride:   stride,
+			Rect:     rect,
+			Channels: channels,
+			Depth:    depth,
+		},
+	}
+	return p
 }
 
 func (p *Unknown) BaseType() image.Image {
@@ -160,41 +191,6 @@ func (p *Unknown) SubImage(r image.Rectangle) image.Image {
 		p.M.Channels,
 		p.M.Depth,
 	)
-}
-
-// NewUnknown returns a new Unknown with the given bounds.
-func NewUnknown(r image.Rectangle, channels int, depth reflect.Kind) (m *Unknown, err error) {
-	if channels <= 0 || !depthType(depth).IsValid() {
-		err = fmt.Errorf("image: NewUnknown, invalid format: channels = %d, depth = %v", channels, depth)
-		return
-	}
-	m = new(Unknown).Init(
-		make([]uint8, depthType(depth).ByteSize()*channels*r.Dx()*r.Dy()),
-		depthType(depth).ByteSize()*channels*r.Dx(),
-		r,
-		channels,
-		depth,
-	)
-	return
-}
-
-func (p *Unknown) Init(pix []uint8, stride int, rect image.Rectangle, channels int, depth reflect.Kind) *Unknown {
-	*p = Unknown{
-		M: struct {
-			Pix      []uint8
-			Stride   int
-			Rect     image.Rectangle
-			Channels int
-			Depth    reflect.Kind
-		}{
-			Pix:      pix,
-			Stride:   stride,
-			Rect:     rect,
-			Channels: channels,
-			Depth:    depth,
-		},
-	}
-	return p
 }
 
 func (p *Unknown) CopyFrom(m image.Image) Image {

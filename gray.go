@@ -13,13 +13,6 @@ type Gray struct {
 	*image.Gray
 }
 
-func (p *Gray) BaseType() image.Image { return p.Gray }
-func (p *Gray) Pix() []byte           { return p.Gray.Pix }
-func (p *Gray) Stride() int           { return p.Gray.Stride }
-func (p *Gray) Rect() image.Rectangle { return p.Gray.Rect }
-func (p *Gray) Channels() int         { return 1 }
-func (p *Gray) Depth() reflect.Kind   { return reflect.Uint8 }
-
 // NewGray returns a new Gray with the given bounds.
 func NewGray(r image.Rectangle) *Gray {
 	return new(Gray).Init(make([]uint8, 1*r.Dx()*r.Dy()), 1*r.Dx(), r)
@@ -35,6 +28,13 @@ func (p *Gray) Init(pix []uint8, stride int, rect image.Rectangle) *Gray {
 	}
 	return p
 }
+
+func (p *Gray) BaseType() image.Image { return p.Gray }
+func (p *Gray) Pix() []byte           { return p.Gray.Pix }
+func (p *Gray) Stride() int           { return p.Gray.Stride }
+func (p *Gray) Rect() image.Rectangle { return p.Gray.Rect }
+func (p *Gray) Channels() int         { return 1 }
+func (p *Gray) Depth() reflect.Kind   { return reflect.Uint8 }
 
 func (p *Gray) CopyFrom(m image.Image) *Gray {
 	panic("TODO")

@@ -20,6 +20,26 @@ type RGBA128f struct {
 	}
 }
 
+// NewRGBA128f returns a new RGBA128f with the given bounds.
+func NewRGBA128f(r image.Rectangle) *RGBA128f {
+	return new(RGBA128f).Init(make([]uint8, 4*r.Dx()*r.Dy()), 4*r.Dx(), r)
+}
+
+func (p *RGBA128f) Init(pix []uint8, stride int, rect image.Rectangle) *RGBA128f {
+	*p = RGBA128f{
+		M: struct {
+			Pix    []uint8
+			Stride int
+			Rect   image.Rectangle
+		}{
+			Pix:    p.M.Pix,
+			Stride: p.M.Stride,
+			Rect:   p.M.Rect,
+		},
+	}
+	return p
+}
+
 func (p *RGBA128f) BaseType() image.Image { return p }
 func (p *RGBA128f) Pix() []byte           { return p.M.Pix }
 func (p *RGBA128f) Stride() int           { return p.M.Stride }
@@ -130,26 +150,6 @@ func (p *RGBA128f) Opaque() bool {
 		i1 += p.M.Stride
 	}
 	return true
-}
-
-// NewRGBA128f returns a new RGBA128f with the given bounds.
-func NewRGBA128f(r image.Rectangle) *RGBA128f {
-	return new(RGBA128f).Init(make([]uint8, 4*r.Dx()*r.Dy()), 4*r.Dx(), r)
-}
-
-func (p *RGBA128f) Init(pix []uint8, stride int, rect image.Rectangle) *RGBA128f {
-	*p = RGBA128f{
-		M: struct {
-			Pix    []uint8
-			Stride int
-			Rect   image.Rectangle
-		}{
-			Pix:    p.M.Pix,
-			Stride: p.M.Stride,
-			Rect:   p.M.Rect,
-		},
-	}
-	return p
 }
 
 func (p *RGBA128f) CopyFrom(m image.Image) *RGBA128f {
