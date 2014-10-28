@@ -31,8 +31,8 @@ type Image interface {
 	// Get original type, such as *image.Gray, *image.RGBA, etc.
 	BaseType() image.Image
 
-	// Pix holds the image's pixels, as pixel values in big-endian format. The pixel at
-	// (x, y) starts at Pix[(y-Rect.Min.Y)*Stride + (x-Rect.Min.X)*Channels*sizeof(DataType)].
+	// Pix holds the image's pixels, as pixel values in machine order format. The pixel at
+	// (x, y) starts at []Type(Pix[(y-Rect.Min.Y)*Stride:])[(x-Rect.Min.X)*Channels:].
 	Pix() []byte
 	// Stride is the Pix stride (in bytes) between vertically adjacent pixels.
 	Stride() int
