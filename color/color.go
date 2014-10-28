@@ -38,35 +38,53 @@ var (
 
 // Models for the standard color types.
 var (
-	GrayModel      color.Model = color.GrayModel
-	Gray16Model    color.Model = color.Gray16Model
-	Gray32iModel   color.Model = color.ModelFunc(xModel)
-	Gray32fModel   color.Model = color.ModelFunc(xModel)
-	Gray64iModel   color.Model = color.ModelFunc(xModel)
-	Gray64fModel   color.Model = color.ModelFunc(xModel)
-	GrayAModel     color.Model = color.GrayModel
-	GrayA32Model   color.Model = color.Gray16Model
-	GrayA64iModel  color.Model = color.ModelFunc(xModel)
-	GrayA64fModel  color.Model = color.ModelFunc(xModel)
-	GrayA128iModel color.Model = color.ModelFunc(xModel)
-	GrayA128fModel color.Model = color.ModelFunc(xModel)
-	RGBModel       color.Model = color.GrayModel
-	RGB48Model     color.Model = color.Gray16Model
-	RGB96iModel    color.Model = color.ModelFunc(xModel)
-	RGB96fModel    color.Model = color.ModelFunc(xModel)
-	RGB192iModel   color.Model = color.ModelFunc(xModel)
-	RGB192fModel   color.Model = color.ModelFunc(xModel)
-	RGBAModel      color.Model = color.RGBAModel
-	RGBA64Model    color.Model = color.RGBA64Model
-	RGB128iModel   color.Model = color.ModelFunc(xModel)
-	RGB128fModel   color.Model = color.ModelFunc(xModel)
-	RGB256iModel   color.Model = color.ModelFunc(xModel)
-	RGB256fModel   color.Model = color.ModelFunc(xModel)
+	GrayModel      color.Model = color.ModelFunc(grayModel)
+	Gray16Model    color.Model = color.ModelFunc(gray16Model)
+	Gray32iModel   color.Model = color.ModelFunc(gray32iModel)
+	Gray32fModel   color.Model = color.ModelFunc(gray32fModel)
+	Gray64iModel   color.Model = color.ModelFunc(gray64iModel)
+	Gray64fModel   color.Model = color.ModelFunc(gray64fModel)
+	GrayAModel     color.Model = color.ModelFunc(grayAModel)
+	GrayA32Model   color.Model = color.ModelFunc(grayA32Model)
+	GrayA64iModel  color.Model = color.ModelFunc(grayA64iModel)
+	GrayA64fModel  color.Model = color.ModelFunc(grayA64fModel)
+	GrayA128iModel color.Model = color.ModelFunc(grayA128iModel)
+	GrayA128fModel color.Model = color.ModelFunc(grayA128fModel)
+	RGBModel       color.Model = color.ModelFunc(rgbModel)
+	RGB48Model     color.Model = color.ModelFunc(rgb48Model)
+	RGB96iModel    color.Model = color.ModelFunc(rgb96iModel)
+	RGB96fModel    color.Model = color.ModelFunc(rgb96fModel)
+	RGB192iModel   color.Model = color.ModelFunc(rgb192iModel)
+	RGB192fModel   color.Model = color.ModelFunc(rgb192fModel)
+	RGBAModel      color.Model = color.ModelFunc(rgbaModel)
+	RGBA64Model    color.Model = color.ModelFunc(rgba64Model)
+	RGB128iModel   color.Model = color.ModelFunc(rgba128iModel)
+	RGB128fModel   color.Model = color.ModelFunc(rgba128fModel)
+	RGB256iModel   color.Model = color.ModelFunc(rgba256iModel)
+	RGB256fModel   color.Model = color.ModelFunc(rgba256fModel)
 )
 
-func xModel(c color.Color) color.Color {
-	if _, ok := c.(color.RGBA); ok {
-		return c
-	}
-	return c
+func colorRgbToGray(r, g, b uint32) uint32 {
+	y := (299*r + 587*g + 114*b + 500) / 1000
+	return y
+}
+
+func colorRgbToGrayI32(r, g, b int32) int32 {
+	y := (299*r + 587*g + 114*b + 500) / 1000
+	return y
+}
+
+func colorRgbToGrayF32(r, g, b float32) float32 {
+	y := (299*r + 587*g + 114*b + 500) / 1000
+	return y
+}
+
+func colorRgbToGrayI64(r, g, b int64) int64 {
+	y := (299*r + 587*g + 114*b + 500) / 1000
+	return y
+}
+
+func colorRgbToGrayF64(r, g, b float64) float64 {
+	y := (299*r + 587*g + 114*b + 500) / 1000
+	return y
 }
