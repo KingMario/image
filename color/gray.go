@@ -57,6 +57,72 @@ func gray32iModel(c color.Color) color.Color {
 	if c, ok := c.(Gray32i); ok {
 		return c
 	}
+	switch c := c.(type) {
+	case Gray32i:
+		return Gray32i{
+			Y: int32(c.Y),
+		}
+	case Gray32f:
+		return Gray32i{
+			Y: int32(c.Y),
+		}
+	case Gray64i:
+		return Gray32i{
+			Y: int32(c.Y),
+		}
+	case Gray64f:
+		return Gray32i{
+			Y: int32(c.Y),
+		}
+	case GrayA64i:
+		return Gray32i{
+			Y: int32(c.Y),
+		}
+	case GrayA64f:
+		return Gray32i{
+			Y: int32(c.Y),
+		}
+	case GrayA128i:
+		return Gray32i{
+			Y: int32(c.Y),
+		}
+	case GrayA128f:
+		return Gray32i{
+			Y: int32(c.Y),
+		}
+	case RGB96i:
+		return Gray32i{
+			Y: colorRgbToGrayI32(int32(c.R), int32(c.G), int32(c.B)),
+		}
+	case RGB96f:
+		return Gray32i{
+			Y: colorRgbToGrayI32(int32(c.R), int32(c.G), int32(c.B)),
+		}
+	case RGB192i:
+		return Gray32i{
+			Y: colorRgbToGrayI32(int32(c.R), int32(c.G), int32(c.B)),
+		}
+	case RGB192f:
+		return Gray32i{
+			Y: colorRgbToGrayI32(int32(c.R), int32(c.G), int32(c.B)),
+		}
+	case RGBA128i:
+		return Gray32i{
+			Y: colorRgbToGrayI32(int32(c.R), int32(c.G), int32(c.B)),
+		}
+	case RGBA128f:
+		return Gray32i{
+			Y: colorRgbToGrayI32(int32(c.R), int32(c.G), int32(c.B)),
+		}
+	case RGBA256i:
+		return Gray32i{
+			Y: colorRgbToGrayI32(int32(c.R), int32(c.G), int32(c.B)),
+		}
+	case RGBA256f:
+		return Gray32i{
+			Y: colorRgbToGrayI32(int32(c.R), int32(c.G), int32(c.B)),
+		}
+	}
 	r, g, b, _ := c.RGBA()
 	y := colorRgbToGray(r, g, b)
 	return Gray32i{Y: int32(y)}
@@ -75,9 +141,77 @@ func gray32fModel(c color.Color) color.Color {
 	if c, ok := c.(Gray32f); ok {
 		return c
 	}
+	switch c := c.(type) {
+	case Gray32i:
+		return Gray32f{
+			Y: float32(c.Y),
+		}
+	case Gray32f:
+		return Gray32f{
+			Y: float32(c.Y),
+		}
+	case Gray64i:
+		return Gray32f{
+			Y: float32(c.Y),
+		}
+	case Gray64f:
+		return Gray32f{
+			Y: float32(c.Y),
+		}
+	case GrayA64i:
+		return Gray32f{
+			Y: float32(c.Y),
+		}
+	case GrayA64f:
+		return Gray32f{
+			Y: float32(c.Y),
+		}
+	case GrayA128i:
+		return Gray32f{
+			Y: float32(c.Y),
+		}
+	case GrayA128f:
+		return Gray32f{
+			Y: float32(c.Y),
+		}
+	case RGB96i:
+		return Gray32f{
+			Y: colorRgbToGrayF32(float32(c.R), float32(c.G), float32(c.B)),
+		}
+	case RGB96f:
+		return Gray32f{
+			Y: colorRgbToGrayF32(float32(c.R), float32(c.G), float32(c.B)),
+		}
+	case RGB192i:
+		return Gray32f{
+			Y: colorRgbToGrayF32(float32(c.R), float32(c.G), float32(c.B)),
+		}
+	case RGB192f:
+		return Gray32f{
+			Y: colorRgbToGrayF32(float32(c.R), float32(c.G), float32(c.B)),
+		}
+	case RGBA128i:
+		return Gray32f{
+			Y: colorRgbToGrayF32(float32(c.R), float32(c.G), float32(c.B)),
+		}
+	case RGBA128f:
+		return Gray32f{
+			Y: colorRgbToGrayF32(float32(c.R), float32(c.G), float32(c.B)),
+		}
+	case RGBA256i:
+		return Gray32f{
+			Y: colorRgbToGrayF32(float32(c.R), float32(c.G), float32(c.B)),
+		}
+	case RGBA256f:
+		return Gray32f{
+			Y: colorRgbToGrayF32(float32(c.R), float32(c.G), float32(c.B)),
+		}
+	}
 	r, g, b, _ := c.RGBA()
 	y := colorRgbToGray(r, g, b)
-	return Gray32f{Y: float32(y)}
+	return Gray32f{
+		Y: float32(y),
+	}
 }
 
 type Gray64i struct {
@@ -93,9 +227,77 @@ func gray64iModel(c color.Color) color.Color {
 	if c, ok := c.(Gray64i); ok {
 		return c
 	}
+	switch c := c.(type) {
+	case Gray32i:
+		return Gray64i{
+			Y: int64(c.Y),
+		}
+	case Gray32f:
+		return Gray64i{
+			Y: int64(c.Y),
+		}
+	case Gray64i:
+		return Gray64i{
+			Y: int64(c.Y),
+		}
+	case Gray64f:
+		return Gray64i{
+			Y: int64(c.Y),
+		}
+	case GrayA64i:
+		return Gray64i{
+			Y: int64(c.Y),
+		}
+	case GrayA64f:
+		return Gray64i{
+			Y: int64(c.Y),
+		}
+	case GrayA128i:
+		return Gray64i{
+			Y: int64(c.Y),
+		}
+	case GrayA128f:
+		return Gray64i{
+			Y: int64(c.Y),
+		}
+	case RGB96i:
+		return Gray64i{
+			Y: colorRgbToGrayI64(int64(c.R), int64(c.G), int64(c.B)),
+		}
+	case RGB96f:
+		return Gray64i{
+			Y: colorRgbToGrayI64(int64(c.R), int64(c.G), int64(c.B)),
+		}
+	case RGB192i:
+		return Gray64i{
+			Y: colorRgbToGrayI64(int64(c.R), int64(c.G), int64(c.B)),
+		}
+	case RGB192f:
+		return Gray64i{
+			Y: colorRgbToGrayI64(int64(c.R), int64(c.G), int64(c.B)),
+		}
+	case RGBA128i:
+		return Gray64i{
+			Y: colorRgbToGrayI64(int64(c.R), int64(c.G), int64(c.B)),
+		}
+	case RGBA128f:
+		return Gray64i{
+			Y: colorRgbToGrayI64(int64(c.R), int64(c.G), int64(c.B)),
+		}
+	case RGBA256i:
+		return Gray64i{
+			Y: colorRgbToGrayI64(int64(c.R), int64(c.G), int64(c.B)),
+		}
+	case RGBA256f:
+		return Gray64i{
+			Y: colorRgbToGrayI64(int64(c.R), int64(c.G), int64(c.B)),
+		}
+	}
 	r, g, b, _ := c.RGBA()
 	y := colorRgbToGray(r, g, b)
-	return Gray64i{Y: int64(y)}
+	return Gray64i{
+		Y: int64(y),
+	}
 }
 
 type Gray64f struct {
@@ -111,7 +313,75 @@ func gray64fModel(c color.Color) color.Color {
 	if c, ok := c.(Gray64f); ok {
 		return c
 	}
+	switch c := c.(type) {
+	case Gray32i:
+		return Gray64f{
+			Y: float64(c.Y),
+		}
+	case Gray32f:
+		return Gray64f{
+			Y: float64(c.Y),
+		}
+	case Gray64i:
+		return Gray64f{
+			Y: float64(c.Y),
+		}
+	case Gray64f:
+		return Gray64f{
+			Y: float64(c.Y),
+		}
+	case GrayA64i:
+		return Gray64f{
+			Y: float64(c.Y),
+		}
+	case GrayA64f:
+		return Gray64f{
+			Y: float64(c.Y),
+		}
+	case GrayA128i:
+		return Gray64f{
+			Y: float64(c.Y),
+		}
+	case GrayA128f:
+		return Gray64f{
+			Y: float64(c.Y),
+		}
+	case RGB96i:
+		return Gray64f{
+			Y: colorRgbToGrayF64(float64(c.R), float64(c.G), float64(c.B)),
+		}
+	case RGB96f:
+		return Gray64f{
+			Y: colorRgbToGrayF64(float64(c.R), float64(c.G), float64(c.B)),
+		}
+	case RGB192i:
+		return Gray64f{
+			Y: colorRgbToGrayF64(float64(c.R), float64(c.G), float64(c.B)),
+		}
+	case RGB192f:
+		return Gray64f{
+			Y: colorRgbToGrayF64(float64(c.R), float64(c.G), float64(c.B)),
+		}
+	case RGBA128i:
+		return Gray64f{
+			Y: colorRgbToGrayF64(float64(c.R), float64(c.G), float64(c.B)),
+		}
+	case RGBA128f:
+		return Gray64f{
+			Y: colorRgbToGrayF64(float64(c.R), float64(c.G), float64(c.B)),
+		}
+	case RGBA256i:
+		return Gray64f{
+			Y: colorRgbToGrayF64(float64(c.R), float64(c.G), float64(c.B)),
+		}
+	case RGBA256f:
+		return Gray64f{
+			Y: colorRgbToGrayF64(float64(c.R), float64(c.G), float64(c.B)),
+		}
+	}
 	r, g, b, _ := c.RGBA()
 	y := colorRgbToGray(r, g, b)
-	return Gray64f{Y: float64(y)}
+	return Gray64f{
+		Y: float64(y),
+	}
 }
