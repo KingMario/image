@@ -12,7 +12,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/chai2010/webp"
+	"github.com/chai2010/image/webp"
 )
 
 func main() {

@@ -10,7 +10,7 @@ webp
  ╚══╝╚══╝ ╚══════╝╚═════╝ ╚═╝     
 ```
 
-PkgDoc: [http://godoc.org/github.com/chai2010/webp](http://godoc.org/github.com/chai2010/webp)
+PkgDoc: [http://godoc.org/github.com/chai2010/image/webp](http://godoc.org/github.com/chai2010/image/webp)
 
 Install
 =======
@@ -18,7 +18,7 @@ Install
 Install `GCC` or `MinGW` ([download here](http://tdm-gcc.tdragon.net/download)) at first,
 and then run these commands:
 
-1. `go get github.com/chai2010/webp`
+1. `go get github.com/chai2010/image/webp`
 2. `go run hello.go`
 
 Example
@@ -35,7 +35,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/chai2010/webp"
+	"github.com/chai2010/image/webp"
 )
 
 func main() {
