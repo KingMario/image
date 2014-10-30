@@ -10,7 +10,7 @@ import (
 	"image"
 	"testing"
 
-	image_ext "github.com/chai2010/gopkg/image"
+	imageExt "github.com/chai2010/image"
 )
 
 func diff(m0, m1 image.Image) error {
@@ -54,13 +54,13 @@ func TestEncodeDecode(t *testing.T) {
 	imgs := []image.Image{
 		image.NewGray(image.Rect(0, 0, 10, 10)),
 		image.NewGray16(image.Rect(0, 0, 20, 20)),
-		image_ext.NewGray32f(image.Rect(0, 0, 30, 30)),
-		image_ext.NewRGB(image.Rect(0, 0, 40, 40)),
-		image_ext.NewRGB48(image.Rect(0, 0, 50, 50)),
-		image_ext.NewRGB96f(image.Rect(0, 0, 60, 60)),
+		imageExt.NewGray32f(image.Rect(0, 0, 30, 30)),
+		imageExt.NewRGB(image.Rect(0, 0, 40, 40)),
+		imageExt.NewRGB48(image.Rect(0, 0, 50, 50)),
+		imageExt.NewRGB96f(image.Rect(0, 0, 60, 60)),
 		image.NewRGBA(image.Rect(0, 0, 70, 70)),
 		image.NewRGBA64(image.Rect(0, 0, 80, 80)),
-		image_ext.NewRGBA128f(image.Rect(0, 0, 90, 90)),
+		imageExt.NewRGBA128f(image.Rect(0, 0, 90, 90)),
 	}
 	for i, m0 := range imgs {
 		m1, err := encodeDecode(m0)

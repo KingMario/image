@@ -8,7 +8,7 @@ import (
 	"image"
 	"reflect"
 
-	image_ext "github.com/chai2010/gopkg/image"
+	imageExt "github.com/chai2010/image"
 )
 
 func defaultDepthKind(depth int) reflect.Kind {
@@ -30,7 +30,7 @@ func newBytes(size int, buf []byte) []byte {
 	return make([]byte, size)
 }
 
-func newGray(r image.Rectangle, buf image_ext.Buffer) *image.Gray {
+func newGray(r image.Rectangle, buf imageExt.Buffer) *image.Gray {
 	if buf != nil && r.In(buf.Bounds()) {
 		if m, ok := buf.SubImage(r).(*image.Gray); ok {
 			return m
@@ -39,7 +39,7 @@ func newGray(r image.Rectangle, buf image_ext.Buffer) *image.Gray {
 	return image.NewGray(r)
 }
 
-func newGray16(r image.Rectangle, buf image_ext.Buffer) *image.Gray16 {
+func newGray16(r image.Rectangle, buf imageExt.Buffer) *image.Gray16 {
 	if buf != nil && r.In(buf.Bounds()) {
 		if m, ok := buf.SubImage(r).(*image.Gray16); ok {
 			return m
@@ -48,43 +48,43 @@ func newGray16(r image.Rectangle, buf image_ext.Buffer) *image.Gray16 {
 	return image.NewGray16(r)
 }
 
-func newGray32f(r image.Rectangle, buf image_ext.Buffer) *image_ext.Gray32f {
+func newGray32f(r image.Rectangle, buf imageExt.Buffer) *imageExt.Gray32f {
 	if buf != nil && r.In(buf.Bounds()) {
-		if m, ok := buf.SubImage(r).(*image_ext.Gray32f); ok {
+		if m, ok := buf.SubImage(r).(*imageExt.Gray32f); ok {
 			return m
 		}
 	}
-	return image_ext.NewGray32f(r)
+	return imageExt.NewGray32f(r)
 }
 
-func newRGB(r image.Rectangle, buf image_ext.Buffer) *image_ext.RGB {
+func newRGB(r image.Rectangle, buf imageExt.Buffer) *imageExt.RGB {
 	if buf != nil && r.In(buf.Bounds()) {
-		if m, ok := buf.SubImage(r).(*image_ext.RGB); ok {
+		if m, ok := buf.SubImage(r).(*imageExt.RGB); ok {
 			return m
 		}
 	}
-	return image_ext.NewRGB(r)
+	return imageExt.NewRGB(r)
 }
 
-func newRGB48(r image.Rectangle, buf image_ext.Buffer) *image_ext.RGB48 {
+func newRGB48(r image.Rectangle, buf imageExt.Buffer) *imageExt.RGB48 {
 	if buf != nil && r.In(buf.Bounds()) {
-		if m, ok := buf.SubImage(r).(*image_ext.RGB48); ok {
+		if m, ok := buf.SubImage(r).(*imageExt.RGB48); ok {
 			return m
 		}
 	}
-	return image_ext.NewRGB48(r)
+	return imageExt.NewRGB48(r)
 }
 
-func newRGB96f(r image.Rectangle, buf image_ext.Buffer) *image_ext.RGB96f {
+func newRGB96f(r image.Rectangle, buf imageExt.Buffer) *imageExt.RGB96f {
 	if buf != nil && r.In(buf.Bounds()) {
-		if m, ok := buf.SubImage(r).(*image_ext.RGB96f); ok {
+		if m, ok := buf.SubImage(r).(*imageExt.RGB96f); ok {
 			return m
 		}
 	}
-	return image_ext.NewRGB96f(r)
+	return imageExt.NewRGB96f(r)
 }
 
-func newRGBA(r image.Rectangle, buf image_ext.Buffer) *image.RGBA {
+func newRGBA(r image.Rectangle, buf imageExt.Buffer) *image.RGBA {
 	if buf != nil && r.In(buf.Bounds()) {
 		if m, ok := buf.SubImage(r).(*image.RGBA); ok {
 			return m
@@ -93,7 +93,7 @@ func newRGBA(r image.Rectangle, buf image_ext.Buffer) *image.RGBA {
 	return image.NewRGBA(r)
 }
 
-func newRGBA64(r image.Rectangle, buf image_ext.Buffer) *image.RGBA64 {
+func newRGBA64(r image.Rectangle, buf imageExt.Buffer) *image.RGBA64 {
 	if buf != nil && r.In(buf.Bounds()) {
 		if m, ok := buf.SubImage(r).(*image.RGBA64); ok {
 			return m
@@ -102,11 +102,11 @@ func newRGBA64(r image.Rectangle, buf image_ext.Buffer) *image.RGBA64 {
 	return image.NewRGBA64(r)
 }
 
-func newRGBA128f(r image.Rectangle, buf image_ext.Buffer) *image_ext.RGBA128f {
+func newRGBA128f(r image.Rectangle, buf imageExt.Buffer) *imageExt.RGBA128f {
 	if buf != nil && r.In(buf.Bounds()) {
-		if m, ok := buf.SubImage(r).(*image_ext.RGBA128f); ok {
+		if m, ok := buf.SubImage(r).(*imageExt.RGBA128f); ok {
 			return m
 		}
 	}
-	return image_ext.NewRGBA128f(r)
+	return imageExt.NewRGBA128f(r)
 }

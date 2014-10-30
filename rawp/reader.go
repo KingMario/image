@@ -11,9 +11,8 @@ import (
 	"io"
 	"io/ioutil"
 
-	"code.google.com/p/snappy-go/snappy"
-	image_ext "github.com/chai2010/gopkg/image"
-	"github.com/chai2010/gopkg/image/convert"
+	imageExt "github.com/chai2010/image"
+	"github.com/chai2010/image/rawp/internal/snappy"
 )
 
 // Options are the encoding and decoding parameters.
@@ -103,7 +102,7 @@ func Decode(r io.Reader, opt *Options) (m image.Image, err error) {
 	return
 }
 
-func toOptions(opt image_ext.Options) *Options {
+func toOptions(opt imageExt.Options) *Options {
 	if opt, ok := opt.(*Options); ok {
 		return opt
 	}
@@ -119,18 +118,18 @@ func imageDecode(r io.Reader) (image.Image, error) {
 	return Decode(r, nil)
 }
 
-func imageExtDecode(r io.Reader, opt image_ext.Options) (image.Image, error) {
+func imageExtDecode(r io.Reader, opt imageExt.Options) (image.Image, error) {
 	return Decode(r, toOptions(opt))
 }
 
-func imageExtEncode(w io.Writer, m image.Image, opt image_ext.Options) error {
+func imageExtEncode(w io.Writer, m image.Image, opt imageExt.Options) error {
 	return Encode(w, m, toOptions(opt))
 }
 
 func init() {
 	image.RegisterFormat("rawp", "RAWP\x1B\xF2\x38\x0A", imageDecode, DecodeConfig)
 
-	image_ext.RegisterFormat(image_ext.Format{
+	imageExt.RegisterFormat(imageExt.Format{
 		Name:         "rawp",
 		Extensions:   []string{".rawp"},
 		Magics:       []string{"RAWP\x0A\x38\xF2\x1B"}, // rawSig + rawpMagic(Little Endian)

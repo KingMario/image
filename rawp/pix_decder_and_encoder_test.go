@@ -12,8 +12,8 @@ import (
 	"reflect"
 	"testing"
 
-	image_ext "github.com/chai2010/gopkg/image"
-	color_ext "github.com/chai2010/gopkg/image/color"
+	imageExt "github.com/chai2010/image"
+	colorExt "github.com/chai2010/image/color"
 )
 
 type tTester struct {
@@ -38,27 +38,27 @@ var tTesterList = []tTester{
 		Channels: 1,
 	},
 	tTester{
-		Image:    image_ext.NewGray32f(image.Rect(0, 0, 10, 10)),
-		Model:    color_ext.Gray32fModel,
+		Image:    imageExt.NewGray32f(image.Rect(0, 0, 10, 10)),
+		Model:    colorExt.Gray32fModel,
 		DataType: reflect.Float32,
 		Channels: 1,
 	},
 	// RGB/RGB48/RGB96f
 	tTester{
-		Image:    image_ext.NewRGB(image.Rect(0, 0, 10, 10)),
-		Model:    color_ext.RGBModel,
+		Image:    imageExt.NewRGB(image.Rect(0, 0, 10, 10)),
+		Model:    colorExt.RGBModel,
 		DataType: reflect.Uint8,
 		Channels: 3,
 	},
 	tTester{
-		Image:    image_ext.NewRGB48(image.Rect(0, 0, 10, 10)),
-		Model:    color_ext.RGB48Model,
+		Image:    imageExt.NewRGB48(image.Rect(0, 0, 10, 10)),
+		Model:    colorExt.RGB48Model,
 		DataType: reflect.Uint16,
 		Channels: 3,
 	},
 	tTester{
-		Image:    image_ext.NewRGB96f(image.Rect(0, 0, 10, 10)),
-		Model:    color_ext.RGB96fModel,
+		Image:    imageExt.NewRGB96f(image.Rect(0, 0, 10, 10)),
+		Model:    colorExt.RGB96fModel,
 		DataType: reflect.Float32,
 		Channels: 3,
 	},
@@ -76,8 +76,8 @@ var tTesterList = []tTester{
 		Channels: 4,
 	},
 	tTester{
-		Image:    image_ext.NewRGBA128f(image.Rect(0, 0, 10, 10)),
-		Model:    color_ext.RGBA128fModel,
+		Image:    imageExt.NewRGBA128f(image.Rect(0, 0, 10, 10)),
+		Model:    colorExt.RGBA128fModel,
 		DataType: reflect.Float32,
 		Channels: 4,
 	},
@@ -117,10 +117,10 @@ func tCompareImage(img0 image.Image, channels int, model color.Model, img1 image
 	}
 
 	switch img0.ColorModel() {
-	case color_ext.Gray32fModel:
+	case colorExt.Gray32fModel:
 		b := img1.Bounds()
-		img0 := img0.(*image_ext.Gray32f)
-		img1 := img1.(*image_ext.Gray32f)
+		img0 := img0.(*imageExt.Gray32f)
+		img1 := img1.(*imageExt.Gray32f)
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
 				c0 := img0.Gray32fAt(x, y)
@@ -130,10 +130,10 @@ func tCompareImage(img0 image.Image, channels int, model color.Model, img1 image
 				}
 			}
 		}
-	case color_ext.RGB96fModel:
+	case colorExt.RGB96fModel:
 		b := img1.Bounds()
-		img0 := img0.(*image_ext.RGB96f)
-		img1 := img1.(*image_ext.RGB96f)
+		img0 := img0.(*imageExt.RGB96f)
+		img1 := img1.(*imageExt.RGB96f)
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
 				c0 := img0.RGB96fAt(x, y)
@@ -143,10 +143,10 @@ func tCompareImage(img0 image.Image, channels int, model color.Model, img1 image
 				}
 			}
 		}
-	case color_ext.RGBA128fModel:
+	case colorExt.RGBA128fModel:
 		b := img1.Bounds()
-		img0 := img0.(*image_ext.RGBA128f)
-		img1 := img1.(*image_ext.RGBA128f)
+		img0 := img0.(*imageExt.RGBA128f)
+		img1 := img1.(*imageExt.RGBA128f)
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
 				c0 := img0.RGBA128fAt(x, y)

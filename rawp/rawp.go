@@ -10,7 +10,7 @@
 //		Magic        uint32  // 4Bytes, 0x1BF2380A
 //		Width        uint16  // 2Bytes, image Width
 //		Height       uint16  // 2Bytes, image Height
-//		Channels     byte    // 1Bytes, 1=Gray, 3=RGB, 4=RGBA
+//		Channels     byte    // 1Bytes, 1=Gray, 2=GrayA, 3=RGB, 4=RGBA
 //		Depth        byte    // 1Bytes, 8/16/32/64 bits
 //		DataType     byte    // 1Bytes, 1=Uint, 2=Int, 3=Float
 //		UseSnappy    byte    // 1Bytes, 0=disabled, 1=enabled (RawPImage.Data)
@@ -18,6 +18,8 @@
 //		DataCheckSum uint32  // 4Bytes, CRC32(RawPImage.Data[RawPImage.DataSize])
 //		Data         []byte  // ?Bytes, image data (RawPImage.DataSize)
 //	}
+//
+// Note: RawP.DataType only support Uin8/Uint16/Int32/Int64/Float32/Float64 formats!!!
 //
 // Please report bugs to chaishushan{AT}gmail.com.
 //
@@ -32,8 +34,8 @@ import (
 	"reflect"
 	"unsafe"
 
-	"code.google.com/p/snappy-go/snappy"
-	color_ext "github.com/chai2010/gopkg/image/color"
+	colorExt "github.com/chai2010/image/color"
+	"github.com/chai2010/image/internal/snappy"
 )
 
 const (
@@ -94,15 +96,25 @@ image/rawp.rawpHeader{
 }
 
 func rawpIsValidChannels(channels byte) bool {
-	return channels == 1 || channels == 3 || channels == 4
+	return channels >= 1 && channels <= 4
 }
 
 func rawpIsValidDepth(depth byte) bool {
 	return depth == 8 || depth == 16 || depth == 32 || depth == 64
 }
 
-func rawpIsValidDataType(t byte) bool {
-	return t == rawpDataType_UInt || t == rawpDataType_Int || t == rawpDataType_Float
+func rawpIsValidDataType(depth, dataType byte) bool {
+	switch depth {
+	case 8:
+		return dataType == rawpDataType_UInt
+	case 16:
+		return dataType == rawpDataType_UInt
+	case 32:
+		return dataType == rawpDataType_Int || dataType == rawpDataType_Float
+	case 64:
+		return dataType == rawpDataType_Int || dataType == rawpDataType_Float
+	}
+	return false
 }
 
 func rawpIsValidHeader(hdr *rawpHeader) error {
@@ -122,8 +134,8 @@ func rawpIsValidHeader(hdr *rawpHeader) error {
 	if !rawpIsValidDepth(hdr.Depth) {
 		return fmt.Errorf("image/rawp: bad Depth, %v", hdr.Depth)
 	}
-	if !rawpIsValidDataType(hdr.DataType) {
-		return fmt.Errorf("image/rawp: bad DataType, %v", hdr.DataType)
+	if !rawpIsValidDataType(hdr.Depth, hdr.DataType) {
+		return fmt.Errorf("image/rawp: bad format, Depth = %v, DataType = %v", hdr.Depth, hdr.DataType)
 	}
 
 	if hdr.UseSnappy != 0 && hdr.UseSnappy != 1 {
@@ -169,20 +181,47 @@ func rawpColorModel(hdr *rawpHeader) (color.Model, error) {
 	case hdr.Channels == 1:
 		switch {
 		case hdr.Depth == 8 && hdr.DataType == rawpDataType_UInt:
-			return color.GrayModel, nil
+			return colorExt.GrayModel, nil
 		case hdr.Depth == 16 && hdr.DataType == rawpDataType_UInt:
-			return color.Gray16Model, nil
+			return colorExt.Gray16Model, nil
+		case hdr.Depth == 32 && hdr.DataType == rawpDataType_Int:
+			return colorExt.Gray32iModel, nil
 		case hdr.Depth == 32 && hdr.DataType == rawpDataType_Float:
-			return color_ext.Gray32fModel, nil
+			return colorExt.Gray32fModel, nil
+		case hdr.Depth == 64 && hdr.DataType == rawpDataType_Int:
+			return colorExt.Gray64iModel, nil
+		case hdr.Depth == 64 && hdr.DataType == rawpDataType_Float:
+			return colorExt.Gray64fModel, nil
+		}
+	case hdr.Channels == 2:
+		switch {
+		case hdr.Depth == 8 && hdr.DataType == rawpDataType_UInt:
+			return colorExt.GrayAModel, nil
+		case hdr.Depth == 16 && hdr.DataType == rawpDataType_UInt:
+			return colorExt.GrayA32Model, nil
+		case hdr.Depth == 32 && hdr.DataType == rawpDataType_Int:
+			return colorExt.GrayA64iModel, nil
+		case hdr.Depth == 32 && hdr.DataType == rawpDataType_Float:
+			return colorExt.GrayA64fModel, nil
+		case hdr.Depth == 64 && hdr.DataType == rawpDataType_Int:
+			return colorExt.GrayA128iModel, nil
+		case hdr.Depth == 64 && hdr.DataType == rawpDataType_Float:
+			return colorExt.GrayA128fModel, nil
 		}
 	case hdr.Channels == 3:
 		switch {
 		case hdr.Depth == 8 && hdr.DataType == rawpDataType_UInt:
-			return color_ext.RGBModel, nil
+			return colorExt.RGBModel, nil
 		case hdr.Depth == 16 && hdr.DataType == rawpDataType_UInt:
-			return color_ext.RGB48Model, nil
+			return colorExt.RGB48Model, nil
+		case hdr.Depth == 32 && hdr.DataType == rawpDataType_Int:
+			return colorExt.RGB96iModel, nil
 		case hdr.Depth == 32 && hdr.DataType == rawpDataType_Float:
-			return color_ext.RGB96fModel, nil
+			return colorExt.RGB96fModel, nil
+		case hdr.Depth == 64 && hdr.DataType == rawpDataType_Int:
+			return colorExt.RGB192iModel, nil
+		case hdr.Depth == 64 && hdr.DataType == rawpDataType_Float:
+			return colorExt.RGB192fModel, nil
 		}
 	case hdr.Channels == 4:
 		switch {
@@ -190,8 +229,14 @@ func rawpColorModel(hdr *rawpHeader) (color.Model, error) {
 			return color.RGBAModel, nil
 		case hdr.Depth == 16 && hdr.DataType == rawpDataType_UInt:
 			return color.RGBA64Model, nil
+		case hdr.Depth == 32 && hdr.DataType == rawpDataType_Int:
+			return colorExt.RGBA128iModel, nil
 		case hdr.Depth == 32 && hdr.DataType == rawpDataType_Float:
-			return color_ext.RGBA128fModel, nil
+			return colorExt.RGBA128fModel, nil
+		case hdr.Depth == 64 && hdr.DataType == rawpDataType_Int:
+			return colorExt.RGBA256iModel, nil
+		case hdr.Depth == 64 && hdr.DataType == rawpDataType_Float:
+			return colorExt.RGBA256fModel, nil
 		}
 	}
 	return nil, fmt.Errorf("image/rawp: unsupport color model, hdr = %v", hdr)

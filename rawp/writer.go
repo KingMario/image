@@ -11,9 +11,8 @@ import (
 	"io"
 	"unsafe"
 
-	"code.google.com/p/snappy-go/snappy"
-	image_ext "github.com/chai2010/gopkg/image"
-	"github.com/chai2010/gopkg/image/convert"
+	imageExt "github.com/chai2010/image"
+	"github.com/chai2010/image/rawp/internal/snappy"
 )
 
 // Encode writes the image m to w in RawP format.
@@ -64,11 +63,11 @@ func Encode(w io.Writer, m image.Image, opt *Options) (err error) {
 
 func adjustImage(m image.Image) image.Image {
 	switch m := m.(type) {
-	case *image.Gray, *image.Gray16, *image_ext.Gray32f:
+	case *image.Gray, *image.Gray16, *imageExt.Gray32f:
 		return m
-	case *image_ext.RGB, *image_ext.RGB48, *image_ext.RGB96f:
+	case *imageExt.RGB, *imageExt.RGB48, *imageExt.RGB96f:
 		return m
-	case *image.RGBA, *image.RGBA64, *image_ext.RGBA128f:
+	case *image.RGBA, *image.RGBA64, *imageExt.RGBA128f:
 		return m
 	default:
 		b := m.Bounds()

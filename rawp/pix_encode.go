@@ -10,13 +10,12 @@ import (
 	"image/color"
 	"reflect"
 
-	"github.com/chai2010/gopkg/builtin"
-	image_ext "github.com/chai2010/gopkg/image"
+	imageExt "github.com/chai2010/image"
 )
 
 type pixEncoder struct {
-	Channels int          // 1/3/4
-	DataType reflect.Kind // Uint8/Uint16/Float32
+	Channels int          // 1/2/3/4
+	DataType reflect.Kind // Uint8/Uint16/Int32/Int64/Float32/Float64
 }
 
 func (p *pixEncoder) Encode(m image.Image, buf []byte) (data []byte, err error) {
@@ -160,7 +159,7 @@ func (p *pixEncoder) encodeGray32f(m image.Image, buf []byte) (data []byte, err 
 				off += 4
 			}
 		}
-	case *image_ext.Gray32f:
+	case *imageExt.Gray32f:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -169,7 +168,7 @@ func (p *pixEncoder) encodeGray32f(m image.Image, buf []byte) (data []byte, err 
 				off += 4
 			}
 		}
-	case *image_ext.RGB96f:
+	case *imageExt.RGB96f:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -178,7 +177,7 @@ func (p *pixEncoder) encodeGray32f(m image.Image, buf []byte) (data []byte, err 
 				off += 4
 			}
 		}
-	case *image_ext.RGBA128f:
+	case *imageExt.RGBA128f:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -236,7 +235,7 @@ func (p *pixEncoder) encodeRGB(m image.Image, buf []byte) (data []byte, err erro
 				off += 3
 			}
 		}
-	case *image_ext.RGB:
+	case *imageExt.RGB:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			copy(d[off:][:b.Dx()*3], m.Pix[y*m.Stride:])
@@ -307,7 +306,7 @@ func (p *pixEncoder) encodeRGB48(m image.Image, buf []byte) (data []byte, err er
 				off += 6
 			}
 		}
-	case *image_ext.RGB:
+	case *imageExt.RGB:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -329,7 +328,7 @@ func (p *pixEncoder) encodeRGB48(m image.Image, buf []byte) (data []byte, err er
 				off += 6
 			}
 		}
-	case *image_ext.RGB48:
+	case *imageExt.RGB48:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -405,7 +404,7 @@ func (p *pixEncoder) encodeRGB96f(m image.Image, buf []byte) (data []byte, err e
 				off += 12
 			}
 		}
-	case *image_ext.Gray32f:
+	case *imageExt.Gray32f:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -416,7 +415,7 @@ func (p *pixEncoder) encodeRGB96f(m image.Image, buf []byte) (data []byte, err e
 				off += 12
 			}
 		}
-	case *image_ext.RGB:
+	case *imageExt.RGB:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -449,7 +448,7 @@ func (p *pixEncoder) encodeRGB96f(m image.Image, buf []byte) (data []byte, err e
 				off += 12
 			}
 		}
-	case *image_ext.RGB96f:
+	case *imageExt.RGB96f:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -460,7 +459,7 @@ func (p *pixEncoder) encodeRGB96f(m image.Image, buf []byte) (data []byte, err e
 				off += 12
 			}
 		}
-	case *image_ext.RGBA128f:
+	case *imageExt.RGBA128f:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -527,7 +526,7 @@ func (p *pixEncoder) encodeRGBA(m image.Image, buf []byte) (data []byte, err err
 				off += 4
 			}
 		}
-	case *image_ext.RGB:
+	case *imageExt.RGB:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -545,7 +544,7 @@ func (p *pixEncoder) encodeRGBA(m image.Image, buf []byte) (data []byte, err err
 			copy(d[off:][:b.Dx()*4], m.Pix[y*m.Stride:])
 			off += b.Dx() * 4
 		}
-	case *image_ext.RGB48:
+	case *imageExt.RGB48:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -627,7 +626,7 @@ func (p *pixEncoder) encodeRGBA64(m image.Image, buf []byte) (data []byte, err e
 				off += 8
 			}
 		}
-	case *image_ext.RGB:
+	case *imageExt.RGB:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -639,7 +638,7 @@ func (p *pixEncoder) encodeRGBA64(m image.Image, buf []byte) (data []byte, err e
 				off += 8
 			}
 		}
-	case *image_ext.RGB48:
+	case *imageExt.RGB48:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -733,7 +732,7 @@ func (p *pixEncoder) encodeRGBA128f(m image.Image, buf []byte) (data []byte, err
 				off += 16
 			}
 		}
-	case *image_ext.Gray32f:
+	case *imageExt.Gray32f:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -745,7 +744,7 @@ func (p *pixEncoder) encodeRGBA128f(m image.Image, buf []byte) (data []byte, err
 				off += 16
 			}
 		}
-	case *image_ext.RGB:
+	case *imageExt.RGB:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -757,7 +756,7 @@ func (p *pixEncoder) encodeRGBA128f(m image.Image, buf []byte) (data []byte, err
 				off += 16
 			}
 		}
-	case *image_ext.RGB48:
+	case *imageExt.RGB48:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -769,7 +768,7 @@ func (p *pixEncoder) encodeRGBA128f(m image.Image, buf []byte) (data []byte, err
 				off += 16
 			}
 		}
-	case *image_ext.RGB96f:
+	case *imageExt.RGB96f:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
@@ -805,7 +804,7 @@ func (p *pixEncoder) encodeRGBA128f(m image.Image, buf []byte) (data []byte, err
 				off += 16
 			}
 		}
-	case *image_ext.RGBA128f:
+	case *imageExt.RGBA128f:
 		var off = 0
 		for y := b.Min.Y; y < b.Max.Y; y++ {
 			for x := b.Min.X; x < b.Max.X; x++ {
