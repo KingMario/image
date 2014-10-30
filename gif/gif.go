@@ -68,10 +68,6 @@ func toOptions(opt imageExt.Options) *Options {
 	return nil
 }
 
-func imageExtDecode(r io.Reader) (image.Image, error) {
-	return Decode(r)
-}
-
 func imageExtEncode(w io.Writer, m image.Image, opt imageExt.Options) error {
 	return Encode(w, m, toOptions(opt))
 }
@@ -82,7 +78,7 @@ func init() {
 		Extensions:   []string{".gif"},
 		Magics:       []string{"GIF8?a"},
 		DecodeConfig: DecodeConfig,
-		Decode:       imageExtDecode,
+		Decode:       Decode,
 		Encode:       imageExtEncode,
 	})
 }

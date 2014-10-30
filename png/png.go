@@ -36,10 +36,6 @@ func Encode(w io.Writer, m image.Image) error {
 	return png.Encode(w, m)
 }
 
-func imageExtDecode(r io.Reader) (image.Image, error) {
-	return Decode(r)
-}
-
 func imageExtEncode(w io.Writer, m image.Image, opt imageExt.Options) error {
 	return Encode(w, m)
 }
@@ -50,7 +46,7 @@ func init() {
 		Extensions:   []string{".png"},
 		Magics:       []string{pngHeader},
 		DecodeConfig: DecodeConfig,
-		Decode:       imageExtDecode,
+		Decode:       Decode,
 		Encode:       imageExtEncode,
 	})
 }
