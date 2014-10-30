@@ -9,25 +9,15 @@ package jpeg
 
 import (
 	"image"
-	"image/color"
 	"image/jpeg"
 	"io"
 
-	image_ext "github.com/chai2010/gopkg/image"
-	"github.com/chai2010/gopkg/image/convert"
+	imageExt "github.com/chai2010/image"
 )
 
 // Options are the encoding and decoding parameters.
 type Options struct {
-	*jpeg.Options
-	JpegColorModel color.Model
-}
-
-func (opt *Options) ColorModel() color.Model {
-	if opt != nil {
-		return opt.JpegColorModel
-	}
-	return nil
+	jpeg.Options
 }
 
 func (opt *Options) Lossless() bool {
@@ -35,7 +25,7 @@ func (opt *Options) Lossless() bool {
 }
 
 func (opt *Options) Quality() float32 {
-	if opt != nil && opt.Options != nil {
+	if opt != nil {
 		return float32(opt.Options.Quality)
 	}
 	return 0
@@ -48,54 +38,44 @@ func DecodeConfig(r io.Reader) (config image.Config, err error) {
 }
 
 // Decode reads a JPEG image from r and returns it as an image.Image.
-func Decode(r io.Reader, opt *Options) (m image.Image, err error) {
-	if m, err = jpeg.Decode(r); err != nil {
-		return
-	}
-	if opt != nil && opt.JpegColorModel != nil {
-		m = convert.ColorModel(m, opt.JpegColorModel)
-	}
-	return
+func Decode(r io.Reader) (m image.Image, err error) {
+	return jpeg.Decode(r)
 }
 
 // Encode writes the Image m to w in JPEG 4:2:0 baseline format with the given
 // options. Default parameters are used if a nil *Options is passed.
 func Encode(w io.Writer, m image.Image, opt *Options) error {
-	if opt != nil && opt.JpegColorModel != nil {
-		m = convert.ColorModel(m, opt.JpegColorModel)
-	}
-	if opt != nil && opt.Options != nil {
-		return jpeg.Encode(w, m, opt.Options)
+	if opt != nil {
+		return jpeg.Encode(w, m, &opt.Options)
 	} else {
 		return jpeg.Encode(w, m, nil)
 	}
 }
 
-func toOptions(opt image_ext.Options) *Options {
+func toOptions(opt imageExt.Options) *Options {
 	if opt, ok := opt.(*Options); ok {
 		return opt
 	}
 	if opt != nil {
 		return &Options{
-			Options: &jpeg.Options{
+			Options: jpeg.Options{
 				Quality: int(opt.Quality()),
 			},
-			JpegColorModel: opt.ColorModel(),
 		}
 	}
 	return nil
 }
 
-func imageExtDecode(r io.Reader, opt image_ext.Options) (image.Image, error) {
-	return Decode(r, toOptions(opt))
+func imageExtDecode(r io.Reader) (image.Image, error) {
+	return Decode(r)
 }
 
-func imageExtEncode(w io.Writer, m image.Image, opt image_ext.Options) error {
+func imageExtEncode(w io.Writer, m image.Image, opt imageExt.Options) error {
 	return Encode(w, m, toOptions(opt))
 }
 
 func init() {
-	image_ext.RegisterFormat(image_ext.Format{
+	imageExt.RegisterFormat(imageExt.Format{
 		Name:         "jpeg",
 		Extensions:   []string{".jpeg", ".jpg"},
 		Magics:       []string{"\xff\xd8"},

@@ -31,8 +31,8 @@ type Format struct {
 	Extensions   []string
 	Magics       []string
 	DecodeConfig func(r io.Reader) (image.Config, error)
-	Decode       func(r io.Reader, opt Options) (image.Image, error)
-	Encode       func(w io.Writer, m image.Image) error
+	Decode       func(r io.Reader) (image.Image, error)
+	Encode       func(w io.Writer, m image.Image, opt Options) error
 }
 
 // Formats is the list of registered formats.
@@ -109,13 +109,13 @@ func sniffByMagic(r reader) Format {
 // The string returned is the format name used during format registration.
 // Format registration is typically done by an init function in the codec-
 // specific package.
-func Decode(r io.Reader, opt Options) (image.Image, string, error) {
+func Decode(r io.Reader) (image.Image, string, error) {
 	rr := asReader(r)
 	f := sniffByMagic(rr)
 	if f.Decode == nil {
 		return nil, "", image.ErrFormat
 	}
-	m, err := f.Decode(rr, opt)
+	m, err := f.Decode(rr)
 	return m, f.Name, err
 }
 
@@ -137,29 +137,29 @@ func DecodeConfig(r io.Reader) (image.Config, string, error) {
 // The format is the format name used during format registration.
 // Format registration is typically done by an init function in the codec-
 // specific package.
-func Encode(format string, w io.Writer, m image.Image) error {
+func Encode(format string, w io.Writer, m image.Image, opt Options) error {
 	for _, f := range formats {
 		if f.Name == format {
-			return f.Encode(w, m)
+			return f.Encode(w, m, opt)
 		}
 	}
 	return image.ErrFormat
 }
 
-func Load(filename string, opt Options) (m image.Image, format string, err error) {
+func Load(filename string) (m image.Image, format string, err error) {
 	f, err := os.Open(filename)
 	if err != nil {
 		return
 	}
 	defer f.Close()
-	m, format, err = Decode(f, opt)
+	m, format, err = Decode(f)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func Save(filename string, m image.Image) (err error) {
+func Save(filename string, m image.Image, opt Options) (err error) {
 	f, err := os.Create(filename)
 	if err != nil {
 		return
@@ -170,7 +170,7 @@ func Save(filename string, m image.Image) (err error) {
 	if format.Encode == nil {
 		return image.ErrFormat
 	}
-	if err = format.Encode(f, m); err != nil {
+	if err = format.Encode(f, m, opt); err != nil {
 		return
 	}
 	return

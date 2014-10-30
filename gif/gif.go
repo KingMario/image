@@ -9,25 +9,15 @@ package gif
 
 import (
 	"image"
-	"image/color"
 	"image/gif"
 	"io"
 
-	image_ext "github.com/chai2010/gopkg/image"
-	"github.com/chai2010/gopkg/image/convert"
+	imageExt "github.com/chai2010/image"
 )
 
 // Options are the encoding and decoding parameters.
 type Options struct {
-	*gif.Options
-	GifColorModel color.Model
-}
-
-func (opt *Options) ColorModel() color.Model {
-	if opt != nil {
-		return opt.GifColorModel
-	}
-	return nil
+	gif.Options
 }
 
 func (opt *Options) Lossless() bool {
@@ -46,14 +36,8 @@ func DecodeConfig(r io.Reader) (config image.Config, err error) {
 
 // Decode reads a GIF image from r and returns the first embedded
 // image as an image.Image.
-func Decode(r io.Reader, opt *Options) (m image.Image, err error) {
-	if m, err = gif.Decode(r); err != nil {
-		return
-	}
-	if opt != nil && opt.GifColorModel != nil {
-		m = convert.ColorModel(m, opt.GifColorModel)
-	}
-	return
+func Decode(r io.Reader) (m image.Image, err error) {
+	return gif.Decode(r)
 }
 
 // DecodeAll reads a GIF image from r and returns the sequential frames
@@ -70,38 +54,30 @@ func EncodeAll(w io.Writer, g *gif.GIF) error {
 
 // Encode writes the Image m to w in GIF format.
 func Encode(w io.Writer, m image.Image, opt *Options) error {
-	if opt != nil && opt.GifColorModel != nil {
-		m = convert.ColorModel(m, opt.GifColorModel)
-	}
-	if opt != nil && opt.Options != nil {
-		return gif.Encode(w, m, opt.Options)
+	if opt != nil {
+		return gif.Encode(w, m, &opt.Options)
 	} else {
 		return gif.Encode(w, m, nil)
 	}
 }
 
-func toOptions(opt image_ext.Options) *Options {
+func toOptions(opt imageExt.Options) *Options {
 	if opt, ok := opt.(*Options); ok {
 		return opt
-	}
-	if opt != nil {
-		return &Options{
-			GifColorModel: opt.ColorModel(),
-		}
 	}
 	return nil
 }
 
-func imageExtDecode(r io.Reader, opt image_ext.Options) (image.Image, error) {
-	return Decode(r, toOptions(opt))
+func imageExtDecode(r io.Reader) (image.Image, error) {
+	return Decode(r)
 }
 
-func imageExtEncode(w io.Writer, m image.Image, opt image_ext.Options) error {
+func imageExtEncode(w io.Writer, m image.Image, opt imageExt.Options) error {
 	return Encode(w, m, toOptions(opt))
 }
 
 func init() {
-	image_ext.RegisterFormat(image_ext.Format{
+	imageExt.RegisterFormat(imageExt.Format{
 		Name:         "gif",
 		Extensions:   []string{".gif"},
 		Magics:       []string{"GIF8?a"},
