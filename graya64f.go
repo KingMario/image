@@ -5,16 +5,17 @@
 package image
 
 import (
-	"encoding/binary"
 	"image"
 	"image/color"
-	"math"
 	"reflect"
+	"unsafe"
+
+	colorExt "github.com/chai2010/image/color"
 )
 
 type GrayA64f struct {
 	M struct {
-		Pix    []uint8
+		Pix    []uint8 // []struct{ Y, A float32 }
 		Stride int
 		Rect   image.Rectangle
 	}
@@ -22,7 +23,7 @@ type GrayA64f struct {
 
 // NewGrayA64f returns a new GrayA64f with the given bounds.
 func NewGrayA64f(r image.Rectangle) *GrayA64f {
-	return new(GrayA64f).Init(make([]uint8, 8*r.Dx()*r.Dy()), 8*r.Dx(), r)
+	return new(GrayA64f).Init(make([]uint8, 1*r.Dx()*r.Dy()), 1*r.Dx(), r)
 }
 
 func (p *GrayA64f) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA64f {
@@ -32,49 +33,41 @@ func (p *GrayA64f) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA64f
 			Stride int
 			Rect   image.Rectangle
 		}{
-			Pix:    p.M.Pix,
-			Stride: p.M.Stride,
-			Rect:   p.M.Rect,
+			Pix:    pix,
+			Stride: stride,
+			Rect:   rect,
 		},
 	}
 	return p
 }
 
-func (p *GrayA64f) BaseType() image.Image { return p }
+func (p *GrayA64f) BaseType() image.Image { return asBaseType(p) }
 func (p *GrayA64f) Pix() []byte           { return p.M.Pix }
 func (p *GrayA64f) Stride() int           { return p.M.Stride }
 func (p *GrayA64f) Rect() image.Rectangle { return p.M.Rect }
-func (p *GrayA64f) Channels() int         { return 2 }
-func (p *GrayA64f) Depth() reflect.Kind   { return reflect.Float32 }
+func (p *GrayA64f) Channels() int         { return 1 }
+func (p *GrayA64f) Depth() reflect.Kind   { return reflect.Uint8 }
 
-func (p *GrayA64f) ColorModel() color.Model { return color.RGBA64Model }
+func (p *GrayA64f) ColorModel() color.Model { return colorExt.GrayA64fModel }
 
 func (p *GrayA64f) Bounds() image.Rectangle { return p.M.Rect }
 
 func (p *GrayA64f) At(x, y int) color.Color {
-	c := p.GrayA64fAt(x, y)
-	return color.RGBA64{
-		R: uint16(c[0]),
-		G: uint16(c[0]),
-		B: uint16(c[0]),
-		A: uint16(c[1]),
-	}
+	return p.GrayA64fAt(x, y)
 }
 
-func (p *GrayA64f) GrayA64fAt(x, y int) [2]float32 {
+func (p *GrayA64f) GrayA64fAt(x, y int) colorExt.GrayA64f {
 	if !(image.Point{x, y}.In(p.M.Rect)) {
-		return [2]float32{}
+		return colorExt.GrayA64f{}
 	}
 	i := p.PixOffset(x, y)
-	v0 := math.Float32frombits(binary.BigEndian.Uint32(p.M.Pix[i+4*0:]))
-	v1 := math.Float32frombits(binary.BigEndian.Uint32(p.M.Pix[i+4*1:]))
-	return [2]float32{v0, v1}
+	return *(*colorExt.GrayA64f)(unsafe.Pointer(&p.M.Pix[i]))
 }
 
 // PixOffset returns the index of the first element of Pix that corresponds to
 // the pixel at (x, y).
 func (p *GrayA64f) PixOffset(x, y int) int {
-	return (y-p.M.Rect.Min.Y)*p.M.Stride + (x-p.M.Rect.Min.X)*8
+	return (y-p.M.Rect.Min.Y)*p.M.Stride + (x-p.M.Rect.Min.X)*4
 }
 
 func (p *GrayA64f) Set(x, y int, c color.Color) {
@@ -82,20 +75,17 @@ func (p *GrayA64f) Set(x, y int, c color.Color) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	yy := color.Gray16Model.Convert(c).(color.Gray16).Y
-	_, _, _, aa := c.RGBA()
-	binary.BigEndian.PutUint32(p.M.Pix[i+4*0:], math.Float32bits(float32(yy)))
-	binary.BigEndian.PutUint32(p.M.Pix[i+4*1:], math.Float32bits(float32(aa)))
+	c1 := p.ColorModel().Convert(c).(colorExt.GrayA64f)
+	*(*colorExt.GrayA64f)(unsafe.Pointer(&p.M.Pix[i])) = c1
 	return
 }
 
-func (p *GrayA64f) SetGrayA64f(x, y int, c [2]float32) {
+func (p *GrayA64f) SetGrayA64f(x, y int, c colorExt.GrayA64f) {
 	if !(image.Point{x, y}.In(p.M.Rect)) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	binary.BigEndian.PutUint32(p.M.Pix[i+4*0:], math.Float32bits(c[0]))
-	binary.BigEndian.PutUint32(p.M.Pix[i+4*1:], math.Float32bits(c[1]))
+	*(*colorExt.GrayA64f)(unsafe.Pointer(&p.M.Pix[i])) = c
 	return
 }
 
@@ -119,24 +109,7 @@ func (p *GrayA64f) SubImage(r image.Rectangle) image.Image {
 
 // Opaque scans the entire image and reports whether it is fully opaque.
 func (p *GrayA64f) Opaque() bool {
-	if p.M.Rect.Empty() {
-		return true
-	}
-	i0, i1 := 4, p.M.Rect.Dx()*8
-	for y := p.M.Rect.Min.Y; y < p.M.Rect.Max.Y; y++ {
-		for i := i0; i < i1; i += 8 {
-			if math.Float32frombits(binary.BigEndian.Uint32(p.M.Pix[i:])) < 0xFFFF {
-				return false
-			}
-		}
-		i0 += p.M.Stride
-		i1 += p.M.Stride
-	}
 	return true
-}
-
-func (p *GrayA64f) CopyFrom(m image.Image) *GrayA64f {
-	panic("TODO")
 }
 
 func (p *GrayA64f) Draw(r image.Rectangle, src Image, sp image.Point) Image {

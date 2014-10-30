@@ -7,9 +7,10 @@ package image
 import (
 	"fmt"
 	"image"
-	"image/color"
 	"image/draw"
 	"reflect"
+
+	colorExt "github.com/chai2010/image/color"
 )
 
 var (
@@ -59,6 +60,24 @@ type Image interface {
 	draw.Image
 }
 
+func asBaseType(m Image) image.Image {
+	switch channels, depth := m.Channels(), m.Depth(); {
+	case channels == 1 && depth == reflect.Uint8:
+		return &image.Gray{
+			Pix:    m.Pix(),
+			Stride: m.Stride(),
+			Rect:   m.Rect(),
+		}
+	case channels == 4 && depth == reflect.Uint8:
+		return &image.RGBA{
+			Pix:    m.Pix(),
+			Stride: m.Stride(),
+			Rect:   m.Rect(),
+		}
+	}
+	return m
+}
+
 func newGrayFromImage(m image.Image) *Gray {
 	b := m.Bounds()
 	gray := NewGray(b)
@@ -87,7 +106,7 @@ func newRGBAFromImage(m image.Image) *RGBA {
 	for y := b.Min.Y; y < b.Max.Y; y++ {
 		for x := b.Min.X; x < b.Max.X; x++ {
 			pr, pg, pb, pa := m.At(x, y).RGBA()
-			rgba.SetRGBA(x, y, color.RGBA{
+			rgba.SetRGBA(x, y, colorExt.RGBA{
 				R: uint8(pr >> 8),
 				G: uint8(pg >> 8),
 				B: uint8(pb >> 8),
@@ -104,7 +123,7 @@ func newRGBA64FromImage(m image.Image) *RGBA64 {
 	for y := b.Min.Y; y < b.Max.Y; y++ {
 		for x := b.Min.X; x < b.Max.X; x++ {
 			pr, pg, pb, pa := m.At(x, y).RGBA()
-			rgba64.SetRGBA64(x, y, color.RGBA64{
+			rgba64.SetRGBA64(x, y, colorExt.RGBA64{
 				R: uint16(pr),
 				G: uint16(pg),
 				B: uint16(pb),
@@ -126,11 +145,11 @@ func AsImage(m image.Image) Image {
 	case *image.Alpha16:
 		return newGray16FromImage(m)
 	case *image.Gray:
-		return &Gray{m}
+		return new(Gray).Init(m.Pix, m.Stride, m.Rect)
 	case *image.Gray16:
 		return newGray16FromImage(m)
 	case *image.RGBA:
-		return &RGBA{m}
+		return new(RGBA).Init(m.Pix, m.Stride, m.Rect)
 	case *image.RGBA64:
 		return newRGBA64FromImage(m)
 	case *image.YCbCr:
@@ -224,43 +243,7 @@ func CopyImage(buf, src image.Image) (dst Image) {
 	if buf == nil {
 		return CloneImage(src)
 	}
-
-	switch buf := buf.(type) {
-	case *image.Gray:
-		return (&Gray{buf}).CopyFrom(src)
-	case *image.RGBA:
-		return (&RGBA{buf}).CopyFrom(src)
-
-	case *Gray:
-		return buf.CopyFrom(src)
-	case *Gray16:
-		return buf.CopyFrom(src)
-	case *Gray32f:
-		return buf.CopyFrom(src)
-
-	case *GrayA:
-		return buf.CopyFrom(src)
-	case *GrayA32:
-		return buf.CopyFrom(src)
-	case *GrayA64f:
-		return buf.CopyFrom(src)
-
-	case *RGB:
-		return buf.CopyFrom(src)
-	case *RGB48:
-		return buf.CopyFrom(src)
-	case *RGB96f:
-		return buf.CopyFrom(src)
-
-	case *RGBA:
-		return buf.CopyFrom(src)
-	case *RGBA64:
-		return buf.CopyFrom(src)
-	case *RGBA128f:
-		return buf.CopyFrom(src)
-	}
-
-	return CloneImage(src)
+	panic("TODO")
 }
 
 func ConvertCopyImage(m image.Image, channels int, depth reflect.Kind) (Image, error) {

@@ -58,10 +58,10 @@ var (
 	RGB192fModel   color.Model = color.ModelFunc(rgb192fModel)
 	RGBAModel      color.Model = color.ModelFunc(rgbaModel)
 	RGBA64Model    color.Model = color.ModelFunc(rgba64Model)
-	RGB128iModel   color.Model = color.ModelFunc(rgba128iModel)
-	RGB128fModel   color.Model = color.ModelFunc(rgba128fModel)
-	RGB256iModel   color.Model = color.ModelFunc(rgba256iModel)
-	RGB256fModel   color.Model = color.ModelFunc(rgba256fModel)
+	RGBA128iModel  color.Model = color.ModelFunc(rgba128iModel)
+	RGBA128fModel  color.Model = color.ModelFunc(rgba128fModel)
+	RGBA256iModel  color.Model = color.ModelFunc(rgba256iModel)
+	RGBA256fModel  color.Model = color.ModelFunc(rgba256fModel)
 )
 
 func colorRgbToGray(r, g, b uint32) uint32 {

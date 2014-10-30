@@ -8,11 +8,14 @@ import (
 	"image"
 	"image/color"
 	"reflect"
+	"unsafe"
+
+	colorExt "github.com/chai2010/image/color"
 )
 
 type GrayA64i struct {
 	M struct {
-		Pix    []uint8
+		Pix    []uint8 // []struct{ Y, A int32 }
 		Stride int
 		Rect   image.Rectangle
 	}
@@ -20,7 +23,7 @@ type GrayA64i struct {
 
 // NewGrayA64i returns a new GrayA64i with the given bounds.
 func NewGrayA64i(r image.Rectangle) *GrayA64i {
-	return new(GrayA64i).Init(make([]uint8, 2*r.Dx()*r.Dy()), 2*r.Dx(), r)
+	return new(GrayA64i).Init(make([]uint8, 1*r.Dx()*r.Dy()), 1*r.Dx(), r)
 }
 
 func (p *GrayA64i) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA64i {
@@ -30,50 +33,41 @@ func (p *GrayA64i) Init(pix []uint8, stride int, rect image.Rectangle) *GrayA64i
 			Stride int
 			Rect   image.Rectangle
 		}{
-			Pix:    p.M.Pix,
-			Stride: p.M.Stride,
-			Rect:   p.M.Rect,
+			Pix:    pix,
+			Stride: stride,
+			Rect:   rect,
 		},
 	}
 	return p
 }
 
-func (p *GrayA64i) BaseType() image.Image { return p }
+func (p *GrayA64i) BaseType() image.Image { return asBaseType(p) }
 func (p *GrayA64i) Pix() []byte           { return p.M.Pix }
 func (p *GrayA64i) Stride() int           { return p.M.Stride }
 func (p *GrayA64i) Rect() image.Rectangle { return p.M.Rect }
-func (p *GrayA64i) Channels() int         { return 2 }
+func (p *GrayA64i) Channels() int         { return 1 }
 func (p *GrayA64i) Depth() reflect.Kind   { return reflect.Uint8 }
 
-func (p *GrayA64i) ColorModel() color.Model { return color.RGBAModel }
+func (p *GrayA64i) ColorModel() color.Model { return colorExt.GrayA64iModel }
 
 func (p *GrayA64i) Bounds() image.Rectangle { return p.M.Rect }
 
 func (p *GrayA64i) At(x, y int) color.Color {
-	c := p.GrayAAt(x, y)
-	return color.RGBA{
-		R: c[0],
-		G: c[0],
-		B: c[0],
-		A: c[1],
-	}
+	return p.GrayA64iAt(x, y)
 }
 
-func (p *GrayA64i) GrayAAt(x, y int) [2]uint8 {
+func (p *GrayA64i) GrayA64iAt(x, y int) colorExt.GrayA64i {
 	if !(image.Point{x, y}.In(p.M.Rect)) {
-		return [2]uint8{}
+		return colorExt.GrayA64i{}
 	}
 	i := p.PixOffset(x, y)
-	return [2]uint8{
-		p.M.Pix[i+0],
-		p.M.Pix[i+1],
-	}
+	return *(*colorExt.GrayA64i)(unsafe.Pointer(&p.M.Pix[i]))
 }
 
 // PixOffset returns the index of the first element of Pix that corresponds to
 // the pixel at (x, y).
 func (p *GrayA64i) PixOffset(x, y int) int {
-	return (y-p.M.Rect.Min.Y)*p.M.Stride + (x-p.M.Rect.Min.X)*2
+	return (y-p.M.Rect.Min.Y)*p.M.Stride + (x-p.M.Rect.Min.X)*4
 }
 
 func (p *GrayA64i) Set(x, y int, c color.Color) {
@@ -81,20 +75,17 @@ func (p *GrayA64i) Set(x, y int, c color.Color) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	rr, gg, bb, aa := c.RGBA()
-	yy := colorRgbToGray(rr, gg, bb)
-	p.M.Pix[i+0] = uint8(yy >> 8)
-	p.M.Pix[i+1] = uint8(aa >> 8)
+	c1 := p.ColorModel().Convert(c).(colorExt.GrayA64i)
+	*(*colorExt.GrayA64i)(unsafe.Pointer(&p.M.Pix[i])) = c1
 	return
 }
 
-func (p *GrayA64i) SetGrayA(x, y int, c [2]uint8) {
+func (p *GrayA64i) SetGrayA64i(x, y int, c colorExt.GrayA64i) {
 	if !(image.Point{x, y}.In(p.M.Rect)) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	p.M.Pix[i+0] = c[0]
-	p.M.Pix[i+1] = c[1]
+	*(*colorExt.GrayA64i)(unsafe.Pointer(&p.M.Pix[i])) = c
 	return
 }
 
@@ -118,24 +109,7 @@ func (p *GrayA64i) SubImage(r image.Rectangle) image.Image {
 
 // Opaque scans the entire image and reports whether it is fully opaque.
 func (p *GrayA64i) Opaque() bool {
-	if p.M.Rect.Empty() {
-		return true
-	}
-	i0, i1 := 1, p.M.Rect.Dx()*2
-	for y := p.M.Rect.Min.Y; y < p.M.Rect.Max.Y; y++ {
-		for i := i0; i < i1; i += 2 {
-			if p.M.Pix[i] != 0xFF {
-				return false
-			}
-		}
-		i0 += p.M.Stride
-		i1 += p.M.Stride
-	}
 	return true
-}
-
-func (p *GrayA64i) CopyFrom(m image.Image) *GrayA64i {
-	panic("TODO")
 }
 
 func (p *GrayA64i) Draw(r image.Rectangle, src Image, sp image.Point) Image {

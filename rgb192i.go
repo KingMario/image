@@ -8,11 +8,14 @@ import (
 	"image"
 	"image/color"
 	"reflect"
+	"unsafe"
+
+	colorExt "github.com/chai2010/image/color"
 )
 
 type RGB192i struct {
 	M struct {
-		Pix    []uint8
+		Pix    []uint8 // []struct{ R, G, B int64 }
 		Stride int
 		Rect   image.Rectangle
 	}
@@ -20,7 +23,7 @@ type RGB192i struct {
 
 // NewRGB192i returns a new RGB192i with the given bounds.
 func NewRGB192i(r image.Rectangle) *RGB192i {
-	return new(RGB192i).Init(make([]uint8, 3*r.Dx()*r.Dy()), 3*r.Dx(), r)
+	return new(RGB192i).Init(make([]uint8, 1*r.Dx()*r.Dy()), 1*r.Dx(), r)
 }
 
 func (p *RGB192i) Init(pix []uint8, stride int, rect image.Rectangle) *RGB192i {
@@ -30,51 +33,41 @@ func (p *RGB192i) Init(pix []uint8, stride int, rect image.Rectangle) *RGB192i {
 			Stride int
 			Rect   image.Rectangle
 		}{
-			Pix:    p.M.Pix,
-			Stride: p.M.Stride,
-			Rect:   p.M.Rect,
+			Pix:    pix,
+			Stride: stride,
+			Rect:   rect,
 		},
 	}
 	return p
 }
 
-func (p *RGB192i) BaseType() image.Image { return p }
+func (p *RGB192i) BaseType() image.Image { return asBaseType(p) }
 func (p *RGB192i) Pix() []byte           { return p.M.Pix }
 func (p *RGB192i) Stride() int           { return p.M.Stride }
 func (p *RGB192i) Rect() image.Rectangle { return p.M.Rect }
-func (p *RGB192i) Channels() int         { return 3 }
+func (p *RGB192i) Channels() int         { return 1 }
 func (p *RGB192i) Depth() reflect.Kind   { return reflect.Uint8 }
 
-func (p *RGB192i) ColorModel() color.Model { return color.RGBAModel }
+func (p *RGB192i) ColorModel() color.Model { return colorExt.RGB192iModel }
 
 func (p *RGB192i) Bounds() image.Rectangle { return p.M.Rect }
 
 func (p *RGB192i) At(x, y int) color.Color {
-	c := p.RGBAt(x, y)
-	return color.RGBA{
-		R: c[0],
-		G: c[1],
-		B: c[2],
-		A: 0xFF,
-	}
+	return p.RGB192iAt(x, y)
 }
 
-func (p *RGB192i) RGBAt(x, y int) [3]uint8 {
+func (p *RGB192i) RGB192iAt(x, y int) colorExt.RGB192i {
 	if !(image.Point{x, y}.In(p.M.Rect)) {
-		return [3]uint8{}
+		return colorExt.RGB192i{}
 	}
 	i := p.PixOffset(x, y)
-	return [3]uint8{
-		p.M.Pix[i+0],
-		p.M.Pix[i+1],
-		p.M.Pix[i+2],
-	}
+	return *(*colorExt.RGB192i)(unsafe.Pointer(&p.M.Pix[i]))
 }
 
 // PixOffset returns the index of the first element of Pix that corresponds to
 // the pixel at (x, y).
 func (p *RGB192i) PixOffset(x, y int) int {
-	return (y-p.M.Rect.Min.Y)*p.M.Stride + (x-p.M.Rect.Min.X)*3
+	return (y-p.M.Rect.Min.Y)*p.M.Stride + (x-p.M.Rect.Min.X)*4
 }
 
 func (p *RGB192i) Set(x, y int, c color.Color) {
@@ -82,21 +75,17 @@ func (p *RGB192i) Set(x, y int, c color.Color) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	c1 := color.RGBAModel.Convert(c).(color.RGBA)
-	p.M.Pix[i+0] = c1.R
-	p.M.Pix[i+1] = c1.G
-	p.M.Pix[i+2] = c1.B
+	c1 := p.ColorModel().Convert(c).(colorExt.RGB192i)
+	*(*colorExt.RGB192i)(unsafe.Pointer(&p.M.Pix[i])) = c1
 	return
 }
 
-func (p *RGB192i) SetRGB(x, y int, c [3]uint8) {
+func (p *RGB192i) SetRGB192i(x, y int, c colorExt.RGB192i) {
 	if !(image.Point{x, y}.In(p.M.Rect)) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	p.M.Pix[i+0] = c[0]
-	p.M.Pix[i+1] = c[1]
-	p.M.Pix[i+2] = c[2]
+	*(*colorExt.RGB192i)(unsafe.Pointer(&p.M.Pix[i])) = c
 	return
 }
 
@@ -121,10 +110,6 @@ func (p *RGB192i) SubImage(r image.Rectangle) image.Image {
 // Opaque scans the entire image and reports whether it is fully opaque.
 func (p *RGB192i) Opaque() bool {
 	return true
-}
-
-func (p *RGB192i) CopyFrom(m image.Image) *RGB192i {
-	panic("TODO")
 }
 
 func (p *RGB192i) Draw(r image.Rectangle, src Image, sp image.Point) Image {
