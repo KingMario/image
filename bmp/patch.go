@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package bmp implements a BMP image decoder and encoder.
-//
-// The BMP specification is at http://www.digicamsoft.com/bmp/bmp.html.
 package bmp
 
 import (
