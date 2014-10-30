@@ -35,7 +35,7 @@ import (
 	"unsafe"
 
 	colorExt "github.com/chai2010/image/color"
-	"github.com/chai2010/image/internal/snappy"
+	"github.com/chai2010/image/rawp/internal/snappy"
 )
 
 const (

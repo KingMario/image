@@ -7,9 +7,22 @@
 package main
 
 import (
-	_ "github.com/chai2010/image"
+	"fmt"
+	"log"
+
+	imageExt "github.com/chai2010/image"
+	_ "github.com/chai2010/image/jpeg"
+	_ "github.com/chai2010/image/webp"
 )
 
 func main() {
-	println("TODO")
+	lena, _, err := imageExt.Load("testdata/lena.jpg")
+	if err != nil {
+		log.Fatalf("Load fialed: %v", err)
+	}
+	err = imageExt.Save("lena.webp", lena, imageExt.NewOptions(true, 0))
+	if err != nil {
+		log.Fatalf("Save fialed: %v", err)
+	}
+	fmt.Println("Save as lossless lena.webp !")
 }

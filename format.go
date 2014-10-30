@@ -18,6 +18,33 @@ type Options interface {
 	Quality() float32
 }
 
+type internalOptions struct {
+	Options struct {
+		Lossless bool
+		Quality  float32
+	}
+}
+
+func (opt *internalOptions) Lossless() bool {
+	return opt.Options.Lossless
+}
+
+func (opt *internalOptions) Quality() float32 {
+	return opt.Options.Quality
+}
+
+func NewOptions(lossless bool, quality float32) Options {
+	return &internalOptions{
+		Options: struct {
+			Lossless bool
+			Quality  float32
+		}{
+			Lossless: lossless,
+			Quality:  quality,
+		},
+	}
+}
+
 // A Format holds an image format's name, magic header and how to decode it.
 // Name is the name of the format, like "jpeg" or "png".
 // Extensions is the name extensions, like ".jpg" or ".jpeg".
