@@ -26,6 +26,10 @@ var convertMap = [][2]string{
 		`github.com/chai2010/webp`,
 		`github.com/chai2010/image/webp`,
 	},
+	[2]string{
+		`code.google.com/p/go.image/tiff`,
+		`github.com/chai2010/image/tiff`,
+	},
 }
 
 func main() {

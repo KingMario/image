@@ -16,7 +16,7 @@ import (
 	"io"
 	"io/ioutil"
 
-	"code.google.com/p/go.image/tiff/lzw"
+	"github.com/chai2010/image/tiff/lzw"
 )
 
 // A FormatError reports that the input is not a valid TIFF image.
