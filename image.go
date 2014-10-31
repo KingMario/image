@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+// The byte order fallacy. By Rob Pike
+// http://commandcenter.blogspot.de/2012/04/byte-order-fallacy.html
+
 package image
 
 import (
@@ -44,8 +47,8 @@ type Image interface {
 	// Get original type, such as *image.Gray, *image.RGBA, etc.
 	BaseType() image.Image
 
-	// Pix holds the image's pixels, as pixel values in machine order format. The pixel at
-	// (x, y) starts at []Type(Pix[(y-Rect.Min.Y)*Stride:])[(x-Rect.Min.X)*Channels:].
+	// Pix holds the image's pixels, as pixel values in big-endian order format. The pixel at
+	// (x, y) starts at Pix[(y-Rect.Min.Y)*Stride + (x-Rect.Min.X)*PixelSize].
 	Pix() []byte
 	// Stride is the Pix stride (in bytes) between vertically adjacent pixels.
 	Stride() int
@@ -58,46 +61,6 @@ type Image interface {
 	Depth() reflect.Kind
 
 	draw.Image
-}
-
-func asBaseType(m Image) image.Image {
-	switch channels, depth := m.Channels(), m.Depth(); {
-	case channels == 1 && depth == reflect.Uint8:
-		return &image.Gray{
-			Pix:    m.Pix(),
-			Stride: m.Stride(),
-			Rect:   m.Rect(),
-		}
-	case channels == 4 && depth == reflect.Uint8:
-		return &image.RGBA{
-			Pix:    m.Pix(),
-			Stride: m.Stride(),
-			Rect:   m.Rect(),
-		}
-	}
-	return m
-}
-
-func newGrayFromImage(m image.Image) *Gray {
-	b := m.Bounds()
-	gray := NewGray(b)
-	for y := b.Min.Y; y < b.Max.Y; y++ {
-		for x := b.Min.X; x < b.Max.X; x++ {
-			gray.Set(x, y, m.At(x, y))
-		}
-	}
-	return gray
-}
-
-func newGray16FromImage(m image.Image) *Gray16 {
-	b := m.Bounds()
-	gray16 := NewGray16(b)
-	for y := b.Min.Y; y < b.Max.Y; y++ {
-		for x := b.Min.X; x < b.Max.X; x++ {
-			gray16.Set(x, y, m.At(x, y))
-		}
-	}
-	return gray16
 }
 
 func newRGBAFromImage(m image.Image) *RGBA {
@@ -134,24 +97,50 @@ func newRGBA64FromImage(m image.Image) *RGBA64 {
 	return rgba64
 }
 
+func asBaseType(m Image) image.Image {
+	switch channels, depth := m.Channels(), m.Depth(); {
+	case channels == 1 && depth == reflect.Uint8:
+		return &image.Gray{
+			Pix:    m.Pix(),
+			Stride: m.Stride(),
+			Rect:   m.Rect(),
+		}
+	case channels == 1 && depth == reflect.Uint16:
+		return &image.Gray16{
+			Pix:    m.Pix(),
+			Stride: m.Stride(),
+			Rect:   m.Rect(),
+		}
+	case channels == 4 && depth == reflect.Uint8:
+		return &image.RGBA{
+			Pix:    m.Pix(),
+			Stride: m.Stride(),
+			Rect:   m.Rect(),
+		}
+	case channels == 4 && depth == reflect.Uint16:
+		return &image.RGBA64{
+			Pix:    m.Pix(),
+			Stride: m.Stride(),
+			Rect:   m.Rect(),
+		}
+	}
+	return m
+}
+
 func AsImage(m image.Image) Image {
 	if p, ok := m.(Image); ok {
 		return p
 	}
 
 	switch m := m.(type) {
-	case *image.Alpha:
-		return new(Gray).Init(m.Pix, m.Stride, m.Rect)
-	case *image.Alpha16:
-		return newGray16FromImage(m)
 	case *image.Gray:
 		return new(Gray).Init(m.Pix, m.Stride, m.Rect)
 	case *image.Gray16:
-		return newGray16FromImage(m)
+		return new(Gray16).Init(m.Pix, m.Stride, m.Rect)
 	case *image.RGBA:
 		return new(RGBA).Init(m.Pix, m.Stride, m.Rect)
 	case *image.RGBA64:
-		return newRGBA64FromImage(m)
+		return new(RGBA64).Init(m.Pix, m.Stride, m.Rect)
 	case *image.YCbCr:
 		return newRGBAFromImage(m)
 	}
@@ -220,53 +209,19 @@ func CloneImage(m image.Image) Image {
 	}
 
 	switch m := m.(type) {
-	case *image.Alpha:
-		return new(Gray).Init(append([]uint8(nil), m.Pix...), m.Stride, m.Rect)
-	case *image.Alpha16:
-		return newGray16FromImage(m)
 	case *image.Gray:
 		return new(Gray).Init(append([]uint8(nil), m.Pix...), m.Stride, m.Rect)
 	case *image.Gray16:
-		return newGray16FromImage(m)
+		return new(Gray16).Init(append([]uint8(nil), m.Pix...), m.Stride, m.Rect)
 	case *image.RGBA:
 		return new(RGBA).Init(append([]uint8(nil), m.Pix...), m.Stride, m.Rect)
 	case *image.RGBA64:
-		return newRGBA64FromImage(m)
+		return new(RGBA64).Init(append([]uint8(nil), m.Pix...), m.Stride, m.Rect)
 	case *image.YCbCr:
 		return newRGBAFromImage(m)
 	}
 
 	return newRGBA64FromImage(m)
-}
-
-func CopyImage(buf, src image.Image) (dst Image) {
-	if buf == nil {
-		return CloneImage(src)
-	}
-	panic("TODO")
-}
-
-func ConvertCopyImage(m image.Image, channels int, depth reflect.Kind) (Image, error) {
-	buf, err := NewImage(m.Bounds(), channels, depth)
-	if err != nil {
-		return nil, err
-	}
-	p := CopyImage(buf, m)
-	return p, nil
-}
-
-func ConvertImage(m image.Image, channels int, depth reflect.Kind) (Image, error) {
-	if p, ok := m.(Image); ok {
-		if channels == p.Channels() && depth == p.Depth() {
-			return p, nil
-		}
-	}
-	buf, err := NewImage(m.Bounds(), channels, depth)
-	if err != nil {
-		return nil, err
-	}
-	p := CopyImage(buf, m)
-	return p, nil
 }
 
 func NewImage(r image.Rectangle, channels int, depth reflect.Kind) (m Image, err error) {

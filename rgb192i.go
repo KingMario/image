@@ -10,14 +10,13 @@ import (
 	"image"
 	"image/color"
 	"reflect"
-	"unsafe"
 
 	colorExt "github.com/chai2010/image/color"
 )
 
 type RGB192i struct {
 	M struct {
-		Pix    []uint8 // []struct{ R, G, B int64 }
+		Pix    []uint8
 		Stride int
 		Rect   image.Rectangle
 	}
@@ -63,7 +62,7 @@ func (p *RGB192i) RGB192iAt(x, y int) colorExt.RGB192i {
 		return colorExt.RGB192i{}
 	}
 	i := p.PixOffset(x, y)
-	return *(*colorExt.RGB192i)(unsafe.Pointer(&p.M.Pix[i]))
+	return pRGB192iAt(p.M.Pix[i:])
 }
 
 // PixOffset returns the index of the first element of Pix that corresponds to
@@ -77,8 +76,8 @@ func (p *RGB192i) Set(x, y int, c color.Color) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	c1 := p.ColorModel().Convert(c).(colorExt.RGB192i)
-	*(*colorExt.RGB192i)(unsafe.Pointer(&p.M.Pix[i])) = c1
+	c1 := colorExt.RGB192iModel.Convert(c).(colorExt.RGB192i)
+	pSetRGB192i(p.M.Pix[i:], c1)
 	return
 }
 
@@ -87,7 +86,7 @@ func (p *RGB192i) SetRGB192i(x, y int, c colorExt.RGB192i) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	*(*colorExt.RGB192i)(unsafe.Pointer(&p.M.Pix[i])) = c
+	pSetRGB192i(p.M.Pix[i:], c)
 	return
 }
 
@@ -112,8 +111,4 @@ func (p *RGB192i) SubImage(r image.Rectangle) image.Image {
 // Opaque scans the entire image and reports whether it is fully opaque.
 func (p *RGB192i) Opaque() bool {
 	return true
-}
-
-func (p *RGB192i) Draw(r image.Rectangle, src Image, sp image.Point) Image {
-	panic("TODO")
 }

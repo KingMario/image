@@ -52,12 +52,14 @@ const (
 )
 
 // RawP Image Spec (Little Endian), 24Bytes.
+//
+// Note: RawP.DataType only support Uin8/Uint16/Int32/Int64/Float32/Float64 formats!!!
 type rawpHeader struct {
 	Sig          [4]byte // 4Bytes, WEWP
 	Magic        uint32  // 4Bytes, 0x1BF2380A
 	Width        uint16  // 2Bytes, image Width
 	Height       uint16  // 2Bytes, image Height
-	Channels     byte    // 1Bytes, 1=Gray, 3=RGB, 4=RGBA
+	Channels     byte    // 1Bytes, 1=Gray, 2=GrayA, 3=RGB, 4=RGBA
 	Depth        byte    // 1Bytes, 8/16/32/64 bits
 	DataType     byte    // 1Bytes, 1=Uint, 2=Int, 3=Float
 	UseSnappy    byte    // 1Bytes, 0=disabled, 1=enabled (Header.Data)

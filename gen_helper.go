@@ -268,14 +268,13 @@ import (
 	"image"
 	"image/color"
 	"reflect"
-	"unsafe"
 
 	colorExt "github.com/chai2010/image/color"
 )
 
 type {{.TypeName}} struct {
 	M struct {
-		Pix    []uint8 // {{.PixCommnet}}
+		Pix    []uint8
 		Stride int
 		Rect   image.Rectangle
 	}
@@ -321,7 +320,7 @@ func (p *{{.TypeName}}) {{.TypeName}}At(x, y int) colorExt.{{.TypeName}} {
 		return colorExt.{{.TypeName}}{}
 	}
 	i := p.PixOffset(x, y)
-	return *(*colorExt.{{.TypeName}})(unsafe.Pointer(&p.M.Pix[i]))
+	return p{{.TypeName}}At(p.M.Pix[i:])
 }
 
 // PixOffset returns the index of the first element of Pix that corresponds to
@@ -335,8 +334,8 @@ func (p *{{.TypeName}}) Set(x, y int, c color.Color) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	c1 := p.ColorModel().Convert(c).(colorExt.{{.TypeName}})
-	*(*colorExt.{{.TypeName}})(unsafe.Pointer(&p.M.Pix[i])) = c1
+	c1 := colorExt.{{.TypeName}}Model.Convert(c).(colorExt.{{.TypeName}})
+	pSet{{.TypeName}}(p.M.Pix[i:], c1)
 	return
 }
 
@@ -345,7 +344,7 @@ func (p *{{.TypeName}}) Set{{.TypeName}}(x, y int, c colorExt.{{.TypeName}}) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	*(*colorExt.{{.TypeName}})(unsafe.Pointer(&p.M.Pix[i])) = c
+	pSet{{.TypeName}}(p.M.Pix[i:], c)
 	return
 }
 
@@ -380,9 +379,5 @@ func (p *{{.TypeName}}) Opaque() bool {
 		}
 	}
 {{end}}return true
-}
-
-func (p *{{.TypeName}}) Draw(r image.Rectangle, src Image, sp image.Point) Image {
-	panic("TODO")
 }
 `[1:]))

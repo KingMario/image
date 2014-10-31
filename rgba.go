@@ -10,14 +10,13 @@ import (
 	"image"
 	"image/color"
 	"reflect"
-	"unsafe"
 
 	colorExt "github.com/chai2010/image/color"
 )
 
 type RGBA struct {
 	M struct {
-		Pix    []uint8 // []struct{ R, G, B, A uint8 }
+		Pix    []uint8
 		Stride int
 		Rect   image.Rectangle
 	}
@@ -63,7 +62,7 @@ func (p *RGBA) RGBAAt(x, y int) colorExt.RGBA {
 		return colorExt.RGBA{}
 	}
 	i := p.PixOffset(x, y)
-	return *(*colorExt.RGBA)(unsafe.Pointer(&p.M.Pix[i]))
+	return pRGBAAt(p.M.Pix[i:])
 }
 
 // PixOffset returns the index of the first element of Pix that corresponds to
@@ -77,8 +76,8 @@ func (p *RGBA) Set(x, y int, c color.Color) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	c1 := p.ColorModel().Convert(c).(colorExt.RGBA)
-	*(*colorExt.RGBA)(unsafe.Pointer(&p.M.Pix[i])) = c1
+	c1 := colorExt.RGBAModel.Convert(c).(colorExt.RGBA)
+	pSetRGBA(p.M.Pix[i:], c1)
 	return
 }
 
@@ -87,7 +86,7 @@ func (p *RGBA) SetRGBA(x, y int, c colorExt.RGBA) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	*(*colorExt.RGBA)(unsafe.Pointer(&p.M.Pix[i])) = c
+	pSetRGBA(p.M.Pix[i:], c)
 	return
 }
 
@@ -122,8 +121,4 @@ func (p *RGBA) Opaque() bool {
 		}
 	}
 	return true
-}
-
-func (p *RGBA) Draw(r image.Rectangle, src Image, sp image.Point) Image {
-	panic("TODO")
 }

@@ -10,14 +10,13 @@ import (
 	"image"
 	"image/color"
 	"reflect"
-	"unsafe"
 
 	colorExt "github.com/chai2010/image/color"
 )
 
 type Gray32i struct {
 	M struct {
-		Pix    []uint8 // []struct{ Y int32 }
+		Pix    []uint8
 		Stride int
 		Rect   image.Rectangle
 	}
@@ -63,7 +62,7 @@ func (p *Gray32i) Gray32iAt(x, y int) colorExt.Gray32i {
 		return colorExt.Gray32i{}
 	}
 	i := p.PixOffset(x, y)
-	return *(*colorExt.Gray32i)(unsafe.Pointer(&p.M.Pix[i]))
+	return pGray32iAt(p.M.Pix[i:])
 }
 
 // PixOffset returns the index of the first element of Pix that corresponds to
@@ -77,8 +76,8 @@ func (p *Gray32i) Set(x, y int, c color.Color) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	c1 := p.ColorModel().Convert(c).(colorExt.Gray32i)
-	*(*colorExt.Gray32i)(unsafe.Pointer(&p.M.Pix[i])) = c1
+	c1 := colorExt.Gray32iModel.Convert(c).(colorExt.Gray32i)
+	pSetGray32i(p.M.Pix[i:], c1)
 	return
 }
 
@@ -87,7 +86,7 @@ func (p *Gray32i) SetGray32i(x, y int, c colorExt.Gray32i) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	*(*colorExt.Gray32i)(unsafe.Pointer(&p.M.Pix[i])) = c
+	pSetGray32i(p.M.Pix[i:], c)
 	return
 }
 
@@ -112,8 +111,4 @@ func (p *Gray32i) SubImage(r image.Rectangle) image.Image {
 // Opaque scans the entire image and reports whether it is fully opaque.
 func (p *Gray32i) Opaque() bool {
 	return true
-}
-
-func (p *Gray32i) Draw(r image.Rectangle, src Image, sp image.Point) Image {
-	panic("TODO")
 }

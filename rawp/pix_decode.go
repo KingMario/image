@@ -23,26 +23,64 @@ type pixDecoder struct {
 }
 
 func (p *pixDecoder) Decode(data []byte, buf imageExt.Buffer) (m draw.Image, err error) {
-	// Gray/Gray16/Gray32f
+	// Gray/Gray16/Gray32i/Gray32f/Gray64i/Gray64f
 	if p.Channels == 1 && p.DataType == reflect.Uint8 {
 		return p.decodeGray(data, buf)
 	}
 	if p.Channels == 1 && p.DataType == reflect.Uint16 {
 		return p.decodeGray16(data, buf)
 	}
+	if p.Channels == 1 && p.DataType == reflect.Int32 {
+		return p.decodeGray32f(data, buf)
+	}
 	if p.Channels == 1 && p.DataType == reflect.Float32 {
 		return p.decodeGray32f(data, buf)
 	}
+	if p.Channels == 1 && p.DataType == reflect.Int64 {
+		return p.decodeGray64f(data, buf)
+	}
+	if p.Channels == 1 && p.DataType == reflect.Float64 {
+		return p.decodeGray64f(data, buf)
+	}
 
-	// RGB/RGB48/RGB96f
+	// GrayA/GrayA32/GrayA64i/GrayA64f/GrayA128i/GrayA128f
+	if p.Channels == 1 && p.DataType == reflect.Uint8 {
+		return p.decodeGrayA(data, buf)
+	}
+	if p.Channels == 1 && p.DataType == reflect.Uint16 {
+		return p.decodeGrayA32(data, buf)
+	}
+	if p.Channels == 1 && p.DataType == reflect.Int32 {
+		return p.decodeGrayA64i(data, buf)
+	}
+	if p.Channels == 1 && p.DataType == reflect.Float32 {
+		return p.decodeGrayA64f(data, buf)
+	}
+	if p.Channels == 1 && p.DataType == reflect.Int64 {
+		return p.decodeGrayA128i(data, buf)
+	}
+	if p.Channels == 1 && p.DataType == reflect.Float64 {
+		return p.decodeGrayA128f(data, buf)
+	}
+
+	// RGB/RGB48/RGB96i/RGB96f/RGB192i/RGB192f
 	if p.Channels == 3 && p.DataType == reflect.Uint8 {
 		return p.decodeRGB(data, buf)
 	}
 	if p.Channels == 3 && p.DataType == reflect.Uint16 {
 		return p.decodeRGB48(data, buf)
 	}
+	if p.Channels == 3 && p.DataType == reflect.Int32 {
+		return p.decodeRGB96i(data, buf)
+	}
 	if p.Channels == 3 && p.DataType == reflect.Float32 {
 		return p.decodeRGB96f(data, buf)
+	}
+	if p.Channels == 3 && p.DataType == reflect.Int64 {
+		return p.decodeRGB192i(data, buf)
+	}
+	if p.Channels == 3 && p.DataType == reflect.Float64 {
+		return p.decodeRGB192f(data, buf)
 	}
 
 	// RGBA/RGBA64/RGBA128f
@@ -52,8 +90,17 @@ func (p *pixDecoder) Decode(data []byte, buf imageExt.Buffer) (m draw.Image, err
 	if p.Channels == 4 && p.DataType == reflect.Uint16 {
 		return p.decodeRGBA64(data, buf)
 	}
+	if p.Channels == 4 && p.DataType == reflect.Int32 {
+		return p.decodeRGBA128i(data, buf)
+	}
 	if p.Channels == 4 && p.DataType == reflect.Float32 {
 		return p.decodeRGBA128f(data, buf)
+	}
+	if p.Channels == 4 && p.DataType == reflect.Int64 {
+		return p.decodeRGBA256i(data, buf)
+	}
+	if p.Channels == 4 && p.DataType == reflect.Float64 {
+		return p.decodeRGBA256f(data, buf)
 	}
 
 	// Unknown
@@ -70,8 +117,14 @@ func (p *pixDecoder) getPixelSize() int {
 		return p.Channels * 1
 	case reflect.Uint16:
 		return p.Channels * 2
+	case reflect.Int32:
+		return p.Channels * 4
 	case reflect.Float32:
 		return p.Channels * 4
+	case reflect.Int64:
+		return p.Channels * 8
+	case reflect.Float64:
+		return p.Channels * 8
 	}
 	panic("image/rawp: getPixelSize, unreachable")
 }

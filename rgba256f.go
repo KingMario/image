@@ -10,14 +10,13 @@ import (
 	"image"
 	"image/color"
 	"reflect"
-	"unsafe"
 
 	colorExt "github.com/chai2010/image/color"
 )
 
 type RGBA256f struct {
 	M struct {
-		Pix    []uint8 // []struct{ R, G, B, A float64 }
+		Pix    []uint8
 		Stride int
 		Rect   image.Rectangle
 	}
@@ -63,7 +62,7 @@ func (p *RGBA256f) RGBA256fAt(x, y int) colorExt.RGBA256f {
 		return colorExt.RGBA256f{}
 	}
 	i := p.PixOffset(x, y)
-	return *(*colorExt.RGBA256f)(unsafe.Pointer(&p.M.Pix[i]))
+	return pRGBA256fAt(p.M.Pix[i:])
 }
 
 // PixOffset returns the index of the first element of Pix that corresponds to
@@ -77,8 +76,8 @@ func (p *RGBA256f) Set(x, y int, c color.Color) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	c1 := p.ColorModel().Convert(c).(colorExt.RGBA256f)
-	*(*colorExt.RGBA256f)(unsafe.Pointer(&p.M.Pix[i])) = c1
+	c1 := colorExt.RGBA256fModel.Convert(c).(colorExt.RGBA256f)
+	pSetRGBA256f(p.M.Pix[i:], c1)
 	return
 }
 
@@ -87,7 +86,7 @@ func (p *RGBA256f) SetRGBA256f(x, y int, c colorExt.RGBA256f) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	*(*colorExt.RGBA256f)(unsafe.Pointer(&p.M.Pix[i])) = c
+	pSetRGBA256f(p.M.Pix[i:], c)
 	return
 }
 
@@ -122,8 +121,4 @@ func (p *RGBA256f) Opaque() bool {
 		}
 	}
 	return true
-}
-
-func (p *RGBA256f) Draw(r image.Rectangle, src Image, sp image.Point) Image {
-	panic("TODO")
 }

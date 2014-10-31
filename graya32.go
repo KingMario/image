@@ -10,14 +10,13 @@ import (
 	"image"
 	"image/color"
 	"reflect"
-	"unsafe"
 
 	colorExt "github.com/chai2010/image/color"
 )
 
 type GrayA32 struct {
 	M struct {
-		Pix    []uint8 // []struct{ Y, A uint16 }
+		Pix    []uint8
 		Stride int
 		Rect   image.Rectangle
 	}
@@ -63,7 +62,7 @@ func (p *GrayA32) GrayA32At(x, y int) colorExt.GrayA32 {
 		return colorExt.GrayA32{}
 	}
 	i := p.PixOffset(x, y)
-	return *(*colorExt.GrayA32)(unsafe.Pointer(&p.M.Pix[i]))
+	return pGrayA32At(p.M.Pix[i:])
 }
 
 // PixOffset returns the index of the first element of Pix that corresponds to
@@ -77,8 +76,8 @@ func (p *GrayA32) Set(x, y int, c color.Color) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	c1 := p.ColorModel().Convert(c).(colorExt.GrayA32)
-	*(*colorExt.GrayA32)(unsafe.Pointer(&p.M.Pix[i])) = c1
+	c1 := colorExt.GrayA32Model.Convert(c).(colorExt.GrayA32)
+	pSetGrayA32(p.M.Pix[i:], c1)
 	return
 }
 
@@ -87,7 +86,7 @@ func (p *GrayA32) SetGrayA32(x, y int, c colorExt.GrayA32) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	*(*colorExt.GrayA32)(unsafe.Pointer(&p.M.Pix[i])) = c
+	pSetGrayA32(p.M.Pix[i:], c)
 	return
 }
 
@@ -122,8 +121,4 @@ func (p *GrayA32) Opaque() bool {
 		}
 	}
 	return true
-}
-
-func (p *GrayA32) Draw(r image.Rectangle, src Image, sp image.Point) Image {
-	panic("TODO")
 }

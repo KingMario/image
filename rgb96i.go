@@ -10,14 +10,13 @@ import (
 	"image"
 	"image/color"
 	"reflect"
-	"unsafe"
 
 	colorExt "github.com/chai2010/image/color"
 )
 
 type RGB96i struct {
 	M struct {
-		Pix    []uint8 // []struct{ R, G, B int32 }
+		Pix    []uint8
 		Stride int
 		Rect   image.Rectangle
 	}
@@ -63,7 +62,7 @@ func (p *RGB96i) RGB96iAt(x, y int) colorExt.RGB96i {
 		return colorExt.RGB96i{}
 	}
 	i := p.PixOffset(x, y)
-	return *(*colorExt.RGB96i)(unsafe.Pointer(&p.M.Pix[i]))
+	return pRGB96iAt(p.M.Pix[i:])
 }
 
 // PixOffset returns the index of the first element of Pix that corresponds to
@@ -77,8 +76,8 @@ func (p *RGB96i) Set(x, y int, c color.Color) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	c1 := p.ColorModel().Convert(c).(colorExt.RGB96i)
-	*(*colorExt.RGB96i)(unsafe.Pointer(&p.M.Pix[i])) = c1
+	c1 := colorExt.RGB96iModel.Convert(c).(colorExt.RGB96i)
+	pSetRGB96i(p.M.Pix[i:], c1)
 	return
 }
 
@@ -87,7 +86,7 @@ func (p *RGB96i) SetRGB96i(x, y int, c colorExt.RGB96i) {
 		return
 	}
 	i := p.PixOffset(x, y)
-	*(*colorExt.RGB96i)(unsafe.Pointer(&p.M.Pix[i])) = c
+	pSetRGB96i(p.M.Pix[i:], c)
 	return
 }
 
@@ -112,8 +111,4 @@ func (p *RGB96i) SubImage(r image.Rectangle) image.Image {
 // Opaque scans the entire image and reports whether it is fully opaque.
 func (p *RGB96i) Opaque() bool {
 	return true
-}
-
-func (p *RGB96i) Draw(r image.Rectangle, src Image, sp image.Point) Image {
-	panic("TODO")
 }
